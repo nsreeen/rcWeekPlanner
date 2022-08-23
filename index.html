@@ -16,7 +16,7 @@
   }
 
   .container {
-    max-width: 900px;
+    max-width: 1500px;
     width: 90%;
     margin: 10px auto 0;
   }
@@ -44,10 +44,26 @@
   .data {
     background-color: aliceblue;
     color: #000;
-    min-height: 175px;
-    /* TODO: get a better way to make blocks same size */
-    padding: 4px;
+    height: 540px;
+  }
+
+  .event {
+    background-color: #dcdcdc;
+    margin-bottom: 5px;
+    float: left;
+    width: 100%;
+  }
+
+  .summary {
+    font-size: 12px;
     margin: 0;
+  }
+
+  .timing {
+    font-size: 8px;
+    margin: 0;
+    float: left;
+    margin-right: 5px;
   }
 </style>
 
@@ -79,13 +95,26 @@
       <p class="day-names">Thursday</p>
       <p class="day-names">Friday</p>
 
-      <p id="MONDAY" class="data"></p>
-      <p id="TUESDAY" class="data"></p>
-      <p id="WEDNESDAY" class="data"></p>
-      <p id="THURSDAY" class="data"></p>
-      <p id="FRIDAY" class="data"></p>
+      <div id="MONDAY" class="data"></div>
+      <div id="TUESDAY" class="data"></div>
+      <div id="WEDNESDAY" class="data"></div>
+      <div id="THURSDAY" class="data"></div>
+      <div id="FRIDAY" class="data"></div>
 
     </div>
+
+    <!-- <div id="calendar">
+      <table>
+        <tr>
+          <td class="day-names">Monday</td>
+          <td class="day-names">Tuesday</td>
+          <td class="day-names">Wednesday</td>
+          <td class="day-names">Thursday</td>
+          <td class="day-names">Friday</td>
+        <tr>
+
+      </table>
+    </div> -->
 
     <!-- <div>
       Add an event!
@@ -104,13 +133,44 @@
     Http.open("GET", url);
     Http.send();
     Http.onload = function () {
-
       for (let i = 0; i < Http.response.length; i++) {
         let day_of_week = Http.response[i]["dayOfWeek"];
         let summary = Http.response[i]["summary"];
-        let start = Http.response[i]["start"];
-        console.log(start);
-        document.getElementById(day_of_week).innerHTML += `<p>${summary} at ${new Date(start)}</p>`
+        let start = new Date(Http.response[i]["start"]);
+        let end = new Date(Http.response[i]["end"]);
+        // document.getElementById(day_of_week).innerHTML += `<p>${summary} at ${new Date(start)}</p>`
+        //2022-08-25T20:00Z index.html:151:17
+        console.log(Http.response[i]["start"]);
+        const dayStartHour = 12;
+        const dayStartMinute = 00;
+        const sods = `${Http.response[i]["start"].split("T")[0]}T${String(dayStartHour).padStart(2, '0')}:${String(dayStartMinute).padStart(2, '0')}Z`
+        console.log(sods);
+        const startOfDay = new Date(sods);
+        const offset = (start - startOfDay) / 60000;
+        const length = (end - start) / 60000;
+        console.log(offset);
+
+
+        const eventDiv = document.createElement("div");
+        eventDiv.className = "event";
+        eventDiv.style.height = `${length - 5}px`
+        eventDiv.style.marginTop = `${offset - 5}px`
+
+        const timingDiv = document.createElement("div");
+        timingDiv.className = "timing";
+        timingDiv.innerHTML = `${start.toString().split(" ")[4].split(":").splice(0,2).join(":")}-${end.toString().split(" ")[4].split(":").splice(0,2).join(":")}`;
+        eventDiv.appendChild(timingDiv);
+
+        // const summaryText = document.createTextNode(summary);
+        // summaryText.className = "summary";
+        // eventDiv.appendChild(summaryText);
+        const summaryText = document.createElement("div");
+        summaryText.className = "summary";
+        summaryText.innerHTML = summary;
+        eventDiv.appendChild(summaryText);
+
+
+        document.getElementById(day_of_week).appendChild(eventDiv);
       }
 
     }

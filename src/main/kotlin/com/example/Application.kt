@@ -1,9 +1,6 @@
 package com.example
 
-import com.example.models.Event
-import com.example.models.Time
-import com.example.models.isThisWeek
-import com.example.models.utcIsoStringFromRcIcsString
+import com.example.models.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import com.example.plugins.*
@@ -28,8 +25,9 @@ fun main() {
                 call.respond(events)
             }
             post("/") {
-                val event = call.receive<Event>()
-                call.respondText("create event")
+                val createEventRequest = call.receive<CreateEventRequest>()
+                val event: Event = create_event(createEventRequest)
+                call.respond(event)
             }
         }
     }.start(wait = true)
@@ -65,4 +63,8 @@ suspend fun getRcEvents(): List<Event> {
     val thisWeeksEvents: List<Event> = allEvents.filter { event -> isThisWeek(event.start) }
     return thisWeeksEvents
 }
+
+//fun create_event(createEventRequent: CreateEventRequest): Event {
+//
+//}
 
