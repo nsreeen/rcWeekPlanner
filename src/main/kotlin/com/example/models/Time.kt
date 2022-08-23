@@ -5,14 +5,11 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 data class Time(val utcDateTime: String, val dayOfWeek: String)
 
-//ZonedDateTime
-//of(int year, int month, int dayOfMonth, int hour, int minute, int second, int nanoOfSecond, ZoneId zone)
 fun utcIsoStringFromRcIcsString(s: String): Time {
-    //20221031 T101500
-    //01234567 89
     val estTime: ZonedDateTime = getZonedTime(
         year=s.substring(0,4).toInt(),
         month=s.substring(4,6).toInt(),
@@ -25,8 +22,6 @@ fun utcIsoStringFromRcIcsString(s: String): Time {
     )
     //val utcTime: ZonedDateTime = estTime.withZoneSameInstant(ZoneId.of("Etc/UTC"))
     val utcTime: ZonedDateTime = estTime.withZoneSameInstant(ZoneOffset.UTC)
-    println(estTime)
-    println(utcTime)
     return Time(
         utcDateTime=utcTime.toString(),//DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(utcTime),
         dayOfWeek=utcTime.dayOfWeek.name,
@@ -44,4 +39,14 @@ fun getZonedTime(
     zone: ZoneId
 ): ZonedDateTime {
     return ZonedDateTime.of(year,month,dayOfMonth,hour,minute,second,nanoOfSecond,zone,)
+}
+
+// utc iso formatted string -> bool is this week of not
+// 2022-08-19T20:00Z -> true
+fun isThisWeek(isoDateTime: String): Boolean {
+    val eventDateTime: ZonedDateTime = ZonedDateTime.parse(isoDateTime, DateTimeFormatter.ISO_ZONED_DATE_TIME)
+    val currentDateTime: ZonedDateTime = ZonedDateTime.now(ZoneId.of("Etc/UTC"))
+    val startOfWeek: ZonedDateTime = currentDateTime.minusDays(currentDateTime.dayOfWeek.ordinal.toLong()).truncatedTo(ChronoUnit.DAYS)
+    val startOfEventWeek: ZonedDateTime = eventDateTime.minusDays(eventDateTime.dayOfWeek.ordinal.toLong()).truncatedTo(ChronoUnit.DAYS)
+    return startOfEventWeek.withZoneSameInstant(ZoneOffset.UTC) == startOfWeek.withZoneSameInstant(ZoneOffset.UTC)
 }

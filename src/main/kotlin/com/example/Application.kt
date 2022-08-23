@@ -2,6 +2,7 @@ package com.example
 
 import com.example.models.Event
 import com.example.models.Time
+import com.example.models.isThisWeek
 import com.example.models.utcIsoStringFromRcIcsString
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -42,7 +43,7 @@ suspend fun getRcEvents(): List<Event> {
         .bodyAsText().splitToSequence("BEGIN:VEVENT")
         .filterIndexed { index, _ -> index > 0 }
         .toList()
-    val events = icsEvents
+    val allEvents = icsEvents
         .map {
             it.lines()
             .map { it.split(":") }
@@ -54,7 +55,6 @@ suspend fun getRcEvents(): List<Event> {
         .map { it ->
             val start: Time = utcIsoStringFromRcIcsString(it.getValue("DTSTART;TZID=America/New_York"))
             val end: Time = utcIsoStringFromRcIcsString(it.getValue("DTEND;TZID=America/New_York"))
-            println(start)
             Event(
                 summary = it.getValue("SUMMARY"),
                 start = start.utcDateTime,
@@ -62,6 +62,7 @@ suspend fun getRcEvents(): List<Event> {
                 dayOfWeek = start.dayOfWeek,
             )
         }
-    return events
+    val thisWeeksEvents: List<Event> = allEvents.filter { event -> isThisWeek(event.start) }
+    return thisWeeksEvents
 }
 
