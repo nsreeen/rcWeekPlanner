@@ -1,6 +1,11 @@
 package com.example.models
 
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.Contextual
+import java.time.DayOfWeek
 
-@Serializable
-data class Event(val summary: String, val start: String, val end: String, val dayOfWeek: String)
+data class Event(
+    val summary: String,
+    val start: DateTime,
+    val end: DateTime,
+    val dayOfWeek: DayOfWeek
+    )
