@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class CreateEventRequest(
     val summary: String,
     val start: String,
-    val end: String
+    val end: String,
+    val userId: String,
     )

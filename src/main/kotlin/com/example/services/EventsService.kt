@@ -10,7 +10,13 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 
 class EventsService {
-    suspend fun getRcEvents(userRcToken: String): List<Event> {
+    suspend fun getRcEvents(userId: String): List<Event> {
+        val userRcToken: String = UserService().getUserRcToken(userId)
+        val allEvents = getAllRcEvents(userRcToken)
+        val thisWeeksEvents: List<Event> = allEvents.filter { event -> isThisWeek(event.start) }
+        return thisWeeksEvents
+    }
+    private suspend fun getAllRcEvents(userRcToken: String): List<Event> {
         val url: String = "https://www.recurse.com/calendar/events.ics?token=%s".format(userRcToken)
         val client = HttpClient(CIO)
         val response: HttpResponse = client.get(url)
@@ -35,9 +41,19 @@ class EventsService {
                     start = start,
                     end = end,
                     dayOfWeek = getDayOfWeek(start),
+                    isRcEvent = true,
                 )
             }
-        val thisWeeksEvents: List<Event> = allEvents.filter { event -> isThisWeek(event.start) }
-        return thisWeeksEvents
+        return allEvents
+    }
+
+    fun createEvent(createEventRequest: CreateEventRequest): Event {
+        return Event(
+            summary=createEventRequest.summary,
+            start=createEventRequest.start,
+            end=createEventRequest.end,
+            dayOfWeek= getDayOfWeek(createEventRequest.start),
+            isRcEvent = false,
+        )
     }
 }

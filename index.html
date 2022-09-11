@@ -102,26 +102,6 @@
       <div id="FRIDAY" class="data"></div>
 
     </div>
-
-    <!-- <div id="calendar">
-      <table>
-        <tr>
-          <td class="day-names">Monday</td>
-          <td class="day-names">Tuesday</td>
-          <td class="day-names">Wednesday</td>
-          <td class="day-names">Thursday</td>
-          <td class="day-names">Friday</td>
-        <tr>
-
-      </table>
-    </div> -->
-
-    <!-- <div>
-      Add an event!
-      <input type="summary" id="summary">
-      <input type="start" id="start">
-      <input type="end" id="end">
-    </div> -->
   </div>
 
   <script>
@@ -129,7 +109,7 @@
   // console.log(tz);
     const Http = new XMLHttpRequest();
     Http.responseType = "json";
-    const url = "http://0.0.0.0:8080/events";
+    const url = "http://0.0.0.0:8080/events?user_id=1234";
     Http.open("GET", url);
     Http.send();
     Http.onload = function () {
@@ -151,7 +131,6 @@
         const offset = (start - startOfDay) / 60000;
         const length = (end - start) / 60000;
         console.log(offset);
-
 
         const eventDiv = document.createElement("div");
         eventDiv.className = "event";

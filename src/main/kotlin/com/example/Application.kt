@@ -18,22 +18,38 @@ fun main() {
         configureSerialization()
         routing {
             get("/{user_id}") {
-                val userId = call.parameters["user_id"]!!
-                call.respond(
-                    UserService().getUser(userId)
-                )
-            }
-            get("/events/{user_id}") {
-                val user_id = call.parameters["user_id"]!!
-                val userRcToken: String = UserService().getUserRcToken(user_id)
-                call.respond(
-                    EventsService().getRcEvents(userRcToken)
-                )
+                try {
+                    val userId = call.parameters["user_id"]!!
+                    call.respond(UserService().getUser(userId))
+                } catch (exception: Exception) {
+                    println(exception)
+                }
             }
             post("/") {
-                val createEventRequest = call.receive<CreateEventRequest>()
-                //val event: Event = create_event(createEventRequest)
-                call.respond("hello")
+                try {
+                    val createUserRequest = call.receive<CreateUserRequest>()
+                    val user: User = UserService().createUser(createUserRequest)
+                    call.respond(user)
+                } catch (exception: Exception) {
+                    println(exception)
+                }
+            }
+            get("/events") {
+                try {
+                    val userId = call.request.queryParameters["user_id"]!!
+                    call.respond(EventsService().getRcEvents(userId))
+                } catch (exception: Exception) {
+                    println(exception)
+                }
+            }
+            post("/events") {
+                try {
+                    val createEventRequest = call.receive<CreateEventRequest>()
+                    val event: Event = EventsService().createEvent(createEventRequest)
+                    call.respond(event)
+                } catch (exception: Exception) {
+                    println(exception)
+                }
             }
         }
     }.start(wait = true)

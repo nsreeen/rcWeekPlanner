@@ -7,5 +7,6 @@ data class Event(
     val summary: String,
     val start: String,
     val end: String,
-    val dayOfWeek: DayOfWeek
+    val dayOfWeek: DayOfWeek,
+    val isRcEvent: Boolean,
     )
