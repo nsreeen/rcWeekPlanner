@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class User(
     val id: String,
     val name: String,
-    val onlineWindows: Map<String,OnlineWindow>,
+    val startTimes: Map<String,String>,
+    val endTimes: Map<String,String>,
     val rcToken: String
     )

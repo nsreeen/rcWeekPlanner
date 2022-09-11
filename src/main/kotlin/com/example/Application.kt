@@ -24,12 +24,13 @@ fun main() {
         routing {
             get("/") {
                 call.respond(
-                    UserService().getUser()
+                    UserService().getUser("")
                 )
             }
             get("/events") {
+                val user: User = UserService().getUser("")
                 call.respond(
-                    EventsService().getRcEvents()
+                    EventsService().getRcEvents(user.rcToken)
                 )
             }
             post("/") {
