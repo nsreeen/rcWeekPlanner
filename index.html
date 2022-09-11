@@ -129,21 +129,23 @@
   // console.log(tz);
     const Http = new XMLHttpRequest();
     Http.responseType = "json";
-    const url = "http://127.0.0.1:8080/";
+    const url = "http://0.0.0.0:8080/events";
     Http.open("GET", url);
     Http.send();
     Http.onload = function () {
-      for (let i = 0; i < Http.response.length; i++) {
-        let day_of_week = Http.response[i]["dayOfWeek"];
-        let summary = Http.response[i]["summary"];
-        let start = new Date(Http.response[i]["start"]);
-        let end = new Date(Http.response[i]["end"]);
+      let events = Http.response;
+      console.log(events.length);
+      for (let i = 0; i < events.length; i++) {
+        let day_of_week = events[i]["dayOfWeek"];
+        let summary = events[i]["summary"];
+        let start = new Date(events[i]["start"]);
+        let end = new Date(events[i]["end"]);
         // document.getElementById(day_of_week).innerHTML += `<p>${summary} at ${new Date(start)}</p>`
         //2022-08-25T20:00Z index.html:151:17
-        console.log(Http.response[i]["start"]);
-        const dayStartHour = 12;
+        console.log(events[i]["start"]);
+        const dayStartHour = Http.response[""];
         const dayStartMinute = 00;
-        const sods = `${Http.response[i]["start"].split("T")[0]}T${String(dayStartHour).padStart(2, '0')}:${String(dayStartMinute).padStart(2, '0')}Z`
+        const sods = `${events[i]["start"].split("T")[0]}T${String(dayStartHour).padStart(2, '0')}:${String(dayStartMinute).padStart(2, '0')}Z`
         console.log(sods);
         const startOfDay = new Date(sods);
         const offset = (start - startOfDay) / 60000;
