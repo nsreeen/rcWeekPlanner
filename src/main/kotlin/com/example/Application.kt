@@ -10,11 +10,6 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.events.*
 
 
 fun main() {
@@ -22,15 +17,17 @@ fun main() {
         configureHTTP()
         configureSerialization()
         routing {
-            get("/") {
+            get("/{user_id}") {
+                val userId = call.parameters["user_id"]!!
                 call.respond(
-                    UserService().getUser("")
+                    UserService().getUser(userId)
                 )
             }
-            get("/events") {
-                val user: User = UserService().getUser("")
+            get("/events/{user_id}") {
+                val user_id = call.parameters["user_id"]!!
+                val userRcToken: String = UserService().getUserRcToken(user_id)
                 call.respond(
-                    EventsService().getRcEvents(user.rcToken)
+                    EventsService().getRcEvents(userRcToken)
                 )
             }
             post("/") {

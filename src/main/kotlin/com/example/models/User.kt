@@ -8,5 +8,4 @@ data class User(
     val name: String,
     val startTimes: Map<String,String>,
     val endTimes: Map<String,String>,
-    val rcToken: String
     )

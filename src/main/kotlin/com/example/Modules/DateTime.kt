@@ -46,5 +46,5 @@ fun getTimeWithDayOffset(hours: Int, dayOffset: Int): String {
         0,
         0,
         ZoneId.of("Etc/UTC")
-    ).toString()
+    ).withZoneSameInstant(ZoneOffset.UTC).toString()
 }
