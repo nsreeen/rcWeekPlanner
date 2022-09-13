@@ -1,17 +1,31 @@
 package com.example.services
 
-import com.example.Modules.formatUtcString
-import com.example.Modules.getDayOfWeek
-import com.example.Modules.isThisWeek
-import com.example.Modules.utcStringFromRcIscString
+import com.example.Modules.*
 import com.example.database.Database
 import com.example.models.*
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import java.time.DayOfWeek
 
 class EventsService {
+    suspend fun getAllEvents(userId: String): List<Event> {
+        val rcEvents: List<Event> = getRcEvents(userId)
+        val internalEventRows: List<EventRow> = Database().allEvents()
+        println(internalEventRows)
+        val internalEvents = internalEventRows.map {row ->
+            Event(
+                summary=row.summary,
+                start=row.start,
+                end=row.end,
+                dayOfWeek=getDayOfWeek(row.start),
+                isRcEvent=false,
+            )
+        }
+        return rcEvents + internalEvents
+    }
+
     suspend fun getRcEvents(userId: String): List<Event> {
         val userRcToken: String = UserService().getUserRcToken(userId)
         val allEvents = getAllRcEvents(userRcToken)
@@ -50,8 +64,8 @@ class EventsService {
     }
 
     suspend fun createEvent(createEventRequest: CreateEventRequest): Event {
-        val start = formatUtcString(createEventRequest.start)
-        val end = formatUtcString(createEventRequest.end)
+        val start = utcStringFromHourAndDay(createEventRequest.start, createEventRequest.day)
+        val end = utcStringFromHourAndDay(createEventRequest.end, createEventRequest.day)
         val event = Event(
             summary=createEventRequest.summary,
             start=start,

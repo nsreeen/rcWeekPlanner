@@ -8,4 +8,5 @@ data class CreateEventRequest(
     val start: String,
     val end: String,
     val userId: String,
+    val day: String,
     )

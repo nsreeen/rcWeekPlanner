@@ -20,49 +20,55 @@
 </style>
 
 <body>
-
   <div id="navWrap" style="width:70%;height:80%;position:absolute;top:10%;margin:0 auto;right:0;left:0;"></div>
+
+  <div>
+    Add an event!
+    Summary: <input type="summary" id="summary">
+    Start: <input type="start" id="start">
+    End: <input type="end" id="end">
+    Day:<input type="day" id="day">
+    <button id="submit">Submit</button>
+  </div>
+
   <script>
     const Http = new XMLHttpRequest();
     Http.responseType = "json";
-    const eventsUrl = "http://0.0.0.0:8080/events?user_id=1234";
-    Http.open("GET", eventsUrl);
+    Http.open("GET", "http://0.0.0.0:8080/events?user_id=1234");
     Http.send();
     Http.onload = function () {
-      let events = Http.response;
-      let eventsToRender = [];
-
-      for (let i = 0; i < events.length; i++) {
-        let dayOfWeek = events[i]["dayOfWeek"];
-        let summary = events[i]["summary"];
-        let sd = new Date(events[i]["start"])
-        let start = `${sd.getHours() - 12}:${sd.getMinutes().toString().padStart(2, '0')}${sd.getHours() < 12 ? "am" : "pm"}`
-        let ed = new Date(events[i]["end"])
-        let end = `${ed.getHours() - 12}:${ed.getMinutes().toString().padStart(2, '0')}${ed.getHours() < 12 ? "am" : "pm"}`
-
-        console.log(start, end);
-
-        eventsToRender.push([dayOfWeek, start, summary, "#c0c0c0", end]);
-
-      }
-      var prettyCal = new PrettyCalendar(eventsToRender, "navWrap");
-
-      const postHttp = new XMLHttpRequest()
-      postHttp.open('POST', "http://0.0.0.0:8080/events")
-      postHttp.setRequestHeader('Content-type', 'application/json')
-      let data = {
-      summary:"test event",
-      start:new Date().toISOString(),
-      end:new Date().toISOString(),
-      userId:"test user"
-      }
-
-      postHttp.send(JSON.stringify(data)) // Make sure to stringify
-      postHttp.onload = function() {
-          // Do whatever with response
-          alert(postHttp.responseText)
-      }
+          let events = Http.response;
+          let eventsToRender = [];
+          for (let i = 0; i < events.length; i++) {
+                let dayOfWeek = events[i]["dayOfWeek"];
+                let summary = events[i]["summary"];
+                let sd = new Date(events[i]["start"])
+                let start = `${sd.getHours() - 12}:${sd.getMinutes().toString().padStart(2, '0')}${sd.getHours() < 12 ? "am" : "pm"}`
+                let ed = new Date(events[i]["end"])
+                let end = `${ed.getHours() - 12}:${ed.getMinutes().toString().padStart(2, '0')}${ed.getHours() < 12 ? "am" : "pm"}`
+                eventsToRender.push([dayOfWeek, start, summary, "#c0c0c0", end]);
+          }
+          var prettyCal = new PrettyCalendar(eventsToRender, "navWrap");
     }
+
+    document.getElementById("submit").addEventListener("click", function () {
+        const postHttp = new XMLHttpRequest()
+        postHttp.open('POST', "http://0.0.0.0:8080/events")
+        postHttp.setRequestHeader('Content-type', 'application/json')
+        let data = {
+              summary:document.getElementById("summary").value,
+              start:document.getElementById("start").value,
+              end:document.getElementById("end").value,
+              day:document.getElementById("day").value,
+              userId:"test user"
+        }
+
+        postHttp.send(JSON.stringify(data)) // Make sure to stringify
+        postHttp.onload = function() {
+            // Do whatever with response
+            alert(postHttp.responseText)
+        }
+    })
 
   </script>
 </body>

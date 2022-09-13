@@ -37,7 +37,7 @@ fun main() {
             get("/events") {
                 try {
                     val userId = call.request.queryParameters["user_id"]!!
-                    call.respond(EventsService().getRcEvents(userId))
+                    call.respond(EventsService().getAllEvents(userId))
                 } catch (exception: Exception) {
                     println(exception)
                 }
