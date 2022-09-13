@@ -3,7 +3,9 @@
 <meta charset="UTF-8">
 <title>Page Title</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="">
+<link rel="stylesheet" type="text/css" href="https://www.neelsomani.com/projects/calendar/pretty-calendar-minified.css">
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="https://www.neelsomani.com/projects/calendar/pretty-calendar-minified.js"></script>
 <style>
   html {
     box-sizing: border-box;
@@ -15,95 +17,11 @@
     background-color: #333;
   }
 
-  .container {
-    max-width: 1500px;
-    width: 90%;
-    margin: 10px auto 0;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(5, 18%);
-    grid-gap: 10px;
-    align-items: center;
-  }
-
-  .row {
-    display: flex;
-    justify-content: space-around;
-  }
-
-  .day-names {
-    background-color: #000;
-    color: aliceblue;
-    padding: 10px;
-    text-align: center;
-    margin-bottom: 0;
-  }
-
-  .data {
-    background-color: aliceblue;
-    color: #000;
-    height: 540px;
-  }
-
-  .event {
-    background-color: #dcdcdc;
-    margin-bottom: 5px;
-    float: left;
-    width: 100%;
-  }
-
-  .summary {
-    font-size: 12px;
-    margin: 0;
-  }
-
-  .timing {
-    font-size: 8px;
-    margin: 0;
-    float: left;
-    margin-right: 5px;
-  }
 </style>
 
 <body>
 
-  <!-- <table>
-  <tr>
-    <td>Monday</td>
-    <td>Tuesday</td>
-    <td>Wednesday</td>
-    <td>Thursday</td>
-    <td>Friday</td>
-  </tr>
-  <tr>
-    <td id="0"></td>
-    <td id="1"></td>
-    <td id="2"></td>
-    <td id="3"></td>
-    <td id="4"></td>
-  </tr>
-</table> -->
-
-  <div class="container">
-    <div class="grid">
-
-      <p class="day-names">Monday</p>
-      <p class="day-names">Tuesday</p>
-      <p class="day-names">Wednesday</p>
-      <p class="day-names">Thursday</p>
-      <p class="day-names">Friday</p>
-
-      <div id="MONDAY" class="data"></div>
-      <div id="TUESDAY" class="data"></div>
-      <div id="WEDNESDAY" class="data"></div>
-      <div id="THURSDAY" class="data"></div>
-      <div id="FRIDAY" class="data"></div>
-
-    </div>
-  </div>
-
+  <div id="navWrap" style="width:70%;height:80%;position:absolute;top:10%;margin:0 auto;right:0;left:0;"></div>
   <script>
   // const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   // console.log(tz);
@@ -114,45 +32,22 @@
     Http.send();
     Http.onload = function () {
       let events = Http.response;
-      console.log(events.length);
+      let eventsToRender = [];
+
       for (let i = 0; i < events.length; i++) {
-        let day_of_week = events[i]["dayOfWeek"];
+        let dayOfWeek = events[i]["dayOfWeek"];
         let summary = events[i]["summary"];
-        let start = new Date(events[i]["start"]);
-        let end = new Date(events[i]["end"]);
-        // document.getElementById(day_of_week).innerHTML += `<p>${summary} at ${new Date(start)}</p>`
-        //2022-08-25T20:00Z index.html:151:17
-        console.log(events[i]["start"]);
-        const dayStartHour = Http.response[""];
-        const dayStartMinute = 00;
-        const sods = `${events[i]["start"].split("T")[0]}T${String(dayStartHour).padStart(2, '0')}:${String(dayStartMinute).padStart(2, '0')}Z`
-        console.log(sods);
-        const startOfDay = new Date(sods);
-        const offset = (start - startOfDay) / 60000;
-        const length = (end - start) / 60000;
-        console.log(offset);
+        let sd = new Date(events[i]["start"])
+        let start = `${sd.getHours() - 12}:${sd.getMinutes().toString().padStart(2, '0')}${sd.getHours() < 12 ? "am" : "pm"}`
+        let ed = new Date(events[i]["end"])
+        let end = `${ed.getHours() - 12}:${ed.getMinutes().toString().padStart(2, '0')}${ed.getHours() < 12 ? "am" : "pm"}`
 
-        const eventDiv = document.createElement("div");
-        eventDiv.className = "event";
-        eventDiv.style.height = `${length - 5}px`
-        eventDiv.style.marginTop = `${offset - 5}px`
+        console.log(start, end);
 
-        const timingDiv = document.createElement("div");
-        timingDiv.className = "timing";
-        timingDiv.innerHTML = `${start.toString().split(" ")[4].split(":").splice(0,2).join(":")}-${end.toString().split(" ")[4].split(":").splice(0,2).join(":")}`;
-        eventDiv.appendChild(timingDiv);
+        eventsToRender.push([dayOfWeek, start, summary, "#c0c0c0", end]);
 
-        // const summaryText = document.createTextNode(summary);
-        // summaryText.className = "summary";
-        // eventDiv.appendChild(summaryText);
-        const summaryText = document.createElement("div");
-        summaryText.className = "summary";
-        summaryText.innerHTML = summary;
-        eventDiv.appendChild(summaryText);
-
-
-        document.getElementById(day_of_week).appendChild(eventDiv);
       }
+      var prettyCal = new PrettyCalendar(eventsToRender, "navWrap");
 
     }
 
