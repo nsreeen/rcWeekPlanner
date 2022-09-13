@@ -1,8 +1,10 @@
 package com.example.services
 
+import com.example.Modules.formatUtcString
 import com.example.Modules.getDayOfWeek
 import com.example.Modules.isThisWeek
 import com.example.Modules.utcStringFromRcIscString
+import com.example.database.Database
 import com.example.models.*
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -47,13 +49,19 @@ class EventsService {
         return allEvents
     }
 
-    fun createEvent(createEventRequest: CreateEventRequest): Event {
-        return Event(
+    suspend fun createEvent(createEventRequest: CreateEventRequest): Event {
+        val start = formatUtcString(createEventRequest.start)
+        val end = formatUtcString(createEventRequest.end)
+        val event = Event(
             summary=createEventRequest.summary,
-            start=createEventRequest.start,
-            end=createEventRequest.end,
-            dayOfWeek= getDayOfWeek(createEventRequest.start),
+            start=start,
+            end=end,
+            dayOfWeek= getDayOfWeek(start),
             isRcEvent = false,
         )
+        println("here")
+        val eventRow = Database().addEvent(event)
+        println(eventRow)
+        return event
     }
 }

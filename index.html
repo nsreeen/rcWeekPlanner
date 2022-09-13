@@ -23,12 +23,10 @@
 
   <div id="navWrap" style="width:70%;height:80%;position:absolute;top:10%;margin:0 auto;right:0;left:0;"></div>
   <script>
-  // const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  // console.log(tz);
     const Http = new XMLHttpRequest();
     Http.responseType = "json";
-    const url = "http://0.0.0.0:8080/events?user_id=1234";
-    Http.open("GET", url);
+    const eventsUrl = "http://0.0.0.0:8080/events?user_id=1234";
+    Http.open("GET", eventsUrl);
     Http.send();
     Http.onload = function () {
       let events = Http.response;
@@ -49,6 +47,21 @@
       }
       var prettyCal = new PrettyCalendar(eventsToRender, "navWrap");
 
+      const postHttp = new XMLHttpRequest()
+      postHttp.open('POST', "http://0.0.0.0:8080/events")
+      postHttp.setRequestHeader('Content-type', 'application/json')
+      let data = {
+      summary:"test event",
+      start:new Date().toISOString(),
+      end:new Date().toISOString(),
+      userId:"test user"
+      }
+
+      postHttp.send(JSON.stringify(data)) // Make sure to stringify
+      postHttp.onload = function() {
+          // Do whatever with response
+          alert(postHttp.responseText)
+      }
     }
 
   </script>

@@ -11,11 +11,11 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
         configureHTTP()
         configureSerialization()
+        DatabaseFactory.init()
         routing {
             get("/{user_id}") {
                 try {
@@ -45,8 +45,8 @@ fun main() {
             post("/events") {
                 try {
                     val createEventRequest = call.receive<CreateEventRequest>()
-                    val event: Event = EventsService().createEvent(createEventRequest)
-                    call.respond(event)
+                    println(createEventRequest)
+                    call.respond(EventsService().createEvent(createEventRequest))
                 } catch (exception: Exception) {
                     println(exception)
                 }

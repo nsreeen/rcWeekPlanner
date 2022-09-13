@@ -9,7 +9,9 @@ object DatabaseFactory {
         val driverClassName = "org.h2.Driver"
         val jdbcURL = "jdbc:h2:file:./build/db"
         val database = Database.connect(jdbcURL, driverClassName)
-        SchemaUtils.create(EventRows)
+        transaction(database) {
+            SchemaUtils.create(EventRows)
+        }
     }
 
     suspend fun <T> dbQuery(block: suspend () -> T): T =

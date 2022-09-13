@@ -11,12 +11,12 @@ data class EventRow (
     val end: String,
 )
 
-object EventRows: Table("events") {
-    val id: integer("id").autoIncrement()
-    val userId: integer("userId")
-    val summary: varchar("summary", 1024)
-    val start: varchar("start", 128)
-    val end: varchar("end", 128)
+object EventRows: Table() {
+    val id = integer("id").autoIncrement()
+    val userId = integer("userId")
+    val summary = varchar("summary", 1024)
+    val start = varchar("start", 128)
+    val end = varchar("end", 128)
 
-    override val primarykey = PrimaryKey(id)
+    override val primaryKey = PrimaryKey(id)
 }
