@@ -5,6 +5,7 @@ import com.example.models.EventRow
 
 interface DatabaseInterface {
     suspend fun allEvents(): List<EventRow>
-
     suspend fun addEvent(event: Event): EventRow?
+
+    suspend fun deleteEvents()
 }
