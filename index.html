@@ -17,19 +17,31 @@
     background-color: #333;
   }
 
+  #upper {
+    margin: 50px;
+  }
+
 </style>
 
 <body>
-  <div id="navWrap" style="width:70%;height:80%;position:absolute;top:10%;margin:0 auto;right:0;left:0;"></div>
+  <div id="upper">
+    <div>
+      Add an event!
+      Summary: <input id="summary">
+      Start: <input id="start">
+      End: <input id="end">
+      Day:<input id="day">
+      <button id="submit">Submit</button>
+    </div>
 
-  <div>
-    Add an event!
-    Summary: <input type="summary" id="summary">
-    Start: <input type="start" id="start">
-    End: <input type="end" id="end">
-    Day:<input type="day" id="day">
-    <button id="submit">Submit</button>
+    <div>
+      Delete an event:
+      Event ID: <input id="deleteId">
+      <button id="delete">Delete</button>
+    </div>
   </div>
+
+  <div id="navWrap" style="width:70%;height:80%;position:absolute;top:30%;margin:100 auto;right:0;left:0;"></div>
 
   <script>
     const Http = new XMLHttpRequest();
@@ -41,7 +53,7 @@
           let eventsToRender = [];
           for (let i = 0; i < events.length; i++) {
                 let dayOfWeek = events[i]["dayOfWeek"];
-                let summary = events[i]["summary"];
+                let summary = (events[i].id > 0) ? `${events[i]["summary"]} (id:${events[i]["id"]}` : events[i]["summary"];
                 let sd = new Date(events[i]["start"])
                 let start = `${sd.getHours() - 12}:${sd.getMinutes().toString().padStart(2, '0')}${sd.getHours() < 12 ? "am" : "pm"}`
                 let ed = new Date(events[i]["end"])
@@ -60,12 +72,25 @@
               start:document.getElementById("start").value,
               end:document.getElementById("end").value,
               day:document.getElementById("day").value,
-              userId:"test user"
+              userId:1234
         }
 
-        postHttp.send(JSON.stringify(data)) // Make sure to stringify
+        postHttp.send(JSON.stringify(data))
         postHttp.onload = function() {
-            // Do whatever with response
+            alert(postHttp.responseText)
+        }
+    })
+
+    document.getElementById("delete").addEventListener("click", function () {
+        const postHttp = new XMLHttpRequest()
+        postHttp.open('DELETE', "http://0.0.0.0:8080/events")
+        postHttp.setRequestHeader('Content-type', 'application/json')
+        let data = {
+              id:document.getElementById("deleteId").value,
+        }
+
+        postHttp.send(JSON.stringify(data))
+        postHttp.onload = function() {
             alert(postHttp.responseText)
         }
     })

@@ -23,13 +23,18 @@ class Database: DatabaseInterface {
             }
         }
 
-    override suspend fun addEvent(event: Event): EventRow? {
+    override suspend fun addEvent(
+        userId: Int,
+        summary: String,
+        start: String,
+        end: String,
+    ): EventRow? {
         return dbQuery {
             val insertStatement = EventRows.insert {
-                it[EventRows.userId] = 1234
-                it[EventRows.summary] = event.summary
-                it[EventRows.start] = event.start
-                it[EventRows.end] = event.end
+                it[EventRows.userId] = userId
+                it[EventRows.summary] = summary
+                it[EventRows.start] = start
+                it[EventRows.end] = end
             }
             insertStatement.resultedValues?.singleOrNull()?.let { row ->
                 EventRow(
@@ -43,7 +48,7 @@ class Database: DatabaseInterface {
             }
         }
     }
-    override suspend fun deleteEvents() {
+    override suspend fun deleteEvent(id: Int) {
         dbQuery {
             EventRows.deleteWhere { EventRows.id eq id } > 0
         }

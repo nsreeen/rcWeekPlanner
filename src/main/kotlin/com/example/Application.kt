@@ -45,8 +45,15 @@ fun main() {
             post("/events") {
                 try {
                     val createEventRequest = call.receive<CreateEventRequest>()
-                    println(createEventRequest)
                     call.respond(EventsService().createEvent(createEventRequest))
+                } catch (exception: Exception) {
+                    println(exception)
+                }
+            }
+            delete("/events") {
+                try {
+                    val deleteEventRequest = call.receive<DeleteEventRequest>()
+                    call.respond(EventsService().deleteEvent(deleteEventRequest))
                 } catch (exception: Exception) {
                     println(exception)
                 }

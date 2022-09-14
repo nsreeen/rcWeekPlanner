@@ -16,6 +16,7 @@ class EventsService {
         println(internalEventRows)
         val internalEvents = internalEventRows.map {row ->
             Event(
+                id=row.id,
                 summary=row.summary,
                 start=row.start,
                 end=row.end,
@@ -23,7 +24,12 @@ class EventsService {
                 isRcEvent=false,
             )
         }
-        return rcEvents + internalEvents
+        val allEvents = rcEvents + internalEvents
+        println("\nall events: ")
+        for (event in allEvents) {
+            println(event)
+        }
+        return allEvents
     }
 
     suspend fun getRcEvents(userId: String): List<Event> {
@@ -53,6 +59,7 @@ class EventsService {
                 val start: String = utcStringFromRcIscString(it.getValue("DTSTART;TZID=America/New_York"))
                 val end: String = utcStringFromRcIscString(it.getValue("DTEND;TZID=America/New_York"))
                 Event(
+                    id = 0,
                     summary = it.getValue("SUMMARY"),
                     start = start,
                     end = end,
@@ -66,16 +73,20 @@ class EventsService {
     suspend fun createEvent(createEventRequest: CreateEventRequest): Event {
         val start = utcStringFromHourAndDay(createEventRequest.start, createEventRequest.day)
         val end = utcStringFromHourAndDay(createEventRequest.end, createEventRequest.day)
-        val event = Event(
-            summary=createEventRequest.summary,
-            start=start,
-            end=end,
-            dayOfWeek= getDayOfWeek(start),
-            isRcEvent = false,
+
+        val eventRow = Database().addEvent(createEventRequest.userId, createEventRequest.summary, start, end)
+
+        return Event(
+            id=eventRow!!.id,
+            summary=eventRow!!.summary,
+            start=eventRow!!.start,
+            end=eventRow!!.end,
+            dayOfWeek=getDayOfWeek(start),
+            isRcEvent=false,
         )
-        println("here")
-        val eventRow = Database().addEvent(event)
-        println(eventRow)
-        return event
+    }
+
+    suspend fun deleteEvent(deleteEventRequest: DeleteEventRequest) {
+        Database().deleteEvent(deleteEventRequest.id)
     }
 }
