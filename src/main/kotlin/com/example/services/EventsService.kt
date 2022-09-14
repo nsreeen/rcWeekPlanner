@@ -7,12 +7,11 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import java.time.DayOfWeek
 
 class EventsService {
     suspend fun getAllEvents(userId: String): List<Event> {
         val rcEvents: List<Event> = getRcEvents(userId)
-        val internalEventRows: List<EventRow> = Database().allEvents()
+        val internalEventRows: List<EventRow> = Database().getEvents()
         println(internalEventRows)
         val internalEvents = internalEventRows.map {row ->
             Event(
@@ -33,7 +32,7 @@ class EventsService {
     }
 
     suspend fun getRcEvents(userId: String): List<Event> {
-        val userRcToken: String = UserService().getUserRcToken(userId)
+        val userRcToken: String = "1234"//CalendarService().getUserRcToken(userId)
         val allEvents = getAllRcEvents(userRcToken)
         val thisWeeksEvents: List<Event> = allEvents.filter { event -> isThisWeek(event.start) }
         return thisWeeksEvents

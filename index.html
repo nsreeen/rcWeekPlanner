@@ -26,15 +26,29 @@
     margin-top: 20px;
   }
 
+  #getCalendarPanel {
+    margin: 20px;
+  }
+
 </style>
 
 <body>
 
   <div id="getCalendarPanel">
+    Create a calendar!
+    Name: <input id="calName">
+    Start Time: <input id="calStartTime">
+    End Time: <input id="calEndTime">
+    RC token: <input id="rcToken">
+    <button id="createCalendarSubmit">Submit</button>
+  </div>
+
+  <div id="createCalendarPanel">
     Load a calendar!
-    User hash: <input id="userHash">
+    Calendar token: <input id="calToken">
     <button id="getCalendarSubmit">Submit</button>
   </div>
+
   <div id="editEventsPanel">
     <div>
       Add an event!
@@ -68,12 +82,14 @@
             return eventsToRender
     }
     document.getElementById("getCalendarSubmit").addEventListener("click", function () {
-          let userHash = document.getElementById("userHash").value;
+          let calToken = document.getElementById("calToken").value;
+          console.log(calToken);
           const xMLHttpRequest = new XMLHttpRequest();
           xMLHttpRequest.responseType = "json";
-          xMLHttpRequest.open("GET", `http://0.0.0.0:8080/events?user_id=${userHash}`);
+          xMLHttpRequest.open("GET", `http://0.0.0.0:8080/calendars/${calToken}`);
           xMLHttpRequest.send();
           xMLHttpRequest.onload = function () {
+                console.log(xMLHttpRequest.response);
                 let eventsToRender = parseEvents(xMLHttpRequest.response);
                 var prettyCal = new PrettyCalendar(eventsToRender, "navWrap");
                 document.getElementById("editEventsPanel").style.display = "block";
@@ -92,7 +108,6 @@
               day:document.getElementById("day").value,
               userId:1234
         }
-
         postHttp.send(JSON.stringify(data))
         postHttp.onload = function() {
             alert(postHttp.responseText)
@@ -107,6 +122,22 @@
               id:document.getElementById("deleteId").value,
         }
 
+        postHttp.send(JSON.stringify(data))
+        postHttp.onload = function() {
+            alert(postHttp.responseText)
+        }
+    })
+
+    document.getElementById("createCalendarSubmit").addEventListener("click", function () {
+        const postHttp = new XMLHttpRequest()
+        postHttp.open('POST', "http://0.0.0.0:8080/calendars")
+        postHttp.setRequestHeader('Content-type', 'application/json')
+        let data = {
+              name:document.getElementById("calName").value,
+              online:document.getElementById("calStartTime").value,
+              offline:document.getElementById("calEndTime").value,
+              rcToken:document.getElementById("rcToken").value,
+        }
         postHttp.send(JSON.stringify(data))
         postHttp.onload = function() {
             alert(postHttp.responseText)

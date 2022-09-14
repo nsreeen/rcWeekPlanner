@@ -3,10 +3,9 @@ package com.example.models
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CreateUserRequest(
-    val id: String,
+data class CreateCalendarRequest(
     val name: String,
-    val startTimes: Map<String,String>,
-    val endTimes: Map<String,String>,
+    val online: String,
+    val offline: String,
     val rcToken: String,
 )

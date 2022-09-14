@@ -1,30 +1,29 @@
 package com.example.services
 
 import com.example.Modules.getTimeWithDayOffset
-import com.example.models.CreateEventRequest
-import com.example.models.CreateUserRequest
+import com.example.models.CalendarResponse
+import com.example.models.CreateCalendarRequest
+import com.example.models.Event
 import com.example.models.User
 
 
-class UserService {
-    fun getUser(id: String): User {
-        return User(
-            id="1234",
+class CalendarService {
+    fun getCalendar(calToken: String): CalendarResponse {
+        return CalendarResponse(
+            calToken="1234",
             name="TestName",
-            startTimes=buildTimesMap(12),
-            endTimes=buildTimesMap(21)
+            startTime="1",
+            endTime="2",
+            events=emptyList<Event>(),
         )
     }
-    fun getUserRcToken(id: String): String {
-        return "23d411fdde12626f789c977b90cc995d"
-    }
-
-    fun createUser(createUserRequest: CreateUserRequest): User {
-        return User(
-            id="1234",
+    fun createCalendar(createCalendarRequest: CreateCalendarRequest): CalendarResponse {
+        return CalendarResponse(
+            calToken="1234",
             name="TestName",
-            startTimes=buildTimesMap(12),
-            endTimes=buildTimesMap(21)
+            startTime="1",
+            endTime="2",
+            events=emptyList<Event>(),
         )
     }
     private fun buildTimesMap(hours: Int): Map<String,String> {

@@ -7,14 +7,15 @@ import com.example.models.EventRows
 import com.example.models.EventRows.id
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 
 class Database: DatabaseInterface {
-    override suspend fun allEvents(): List<EventRow> = dbQuery {
+    override suspend fun getEvents(): List<EventRow> = dbQuery {
             EventRows.selectAll().map { row ->
                 EventRow(
                     id=row[EventRows.id],
-                    userId=row[EventRows.userId],
+                    calendarId=row[EventRows.calendarId],
                     summary=row[EventRows.summary],
                     start=row[EventRows.start],
                     end=row[EventRows.end],
@@ -22,6 +23,20 @@ class Database: DatabaseInterface {
                 )
             }
         }
+
+    override suspend fun getEvents(calendarId: Int): List<EventRow> {
+        return EventRows.select { EventRows.calendarId eq calendarId }
+            .map { row ->
+                EventRow(
+                    id=row[EventRows.id],
+                    calendarId=row[EventRows.calendarId],
+                    summary=row[EventRows.summary],
+                    start=row[EventRows.start],
+                    end=row[EventRows.end],
+
+                    )
+                }
+    }
 
     override suspend fun addEvent(
         userId: Int,
@@ -31,7 +46,7 @@ class Database: DatabaseInterface {
     ): EventRow? {
         return dbQuery {
             val insertStatement = EventRows.insert {
-                it[EventRows.userId] = userId
+                it[EventRows.calendarId] = userId
                 it[EventRows.summary] = summary
                 it[EventRows.start] = start
                 it[EventRows.end] = end
@@ -39,7 +54,7 @@ class Database: DatabaseInterface {
             insertStatement.resultedValues?.singleOrNull()?.let { row ->
                 EventRow(
                     id = row[EventRows.id],
-                    userId = row[EventRows.userId],
+                    calendarId=row[EventRows.calendarId],
                     summary = row[EventRows.summary],
                     start = row[EventRows.start],
                     end = row[EventRows.end],

@@ -5,7 +5,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import com.example.plugins.*
 import com.example.services.EventsService
-import com.example.services.UserService
+import com.example.services.CalendarService
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -17,19 +17,19 @@ fun main() {
         configureSerialization()
         DatabaseFactory.init()
         routing {
-            get("/{user_hash}") {
+            get("/calendars/{cal_token}") {
                 try {
-                    val userId = call.parameters["user_hash"]!!
-                    call.respond(UserService().getUser(userId))
+                    val calToken = call.parameters["cal_token"]!!
+                    println(calToken)
+                    call.respond(CalendarService().getCalendar(calToken))
                 } catch (exception: Exception) {
                     println(exception)
                 }
             }
-            post("/") {
+            post("/calendars") {
                 try {
-                    val createUserRequest = call.receive<CreateUserRequest>()
-                    val user: User = UserService().createUser(createUserRequest)
-                    call.respond(user)
+                    val createCalendarRequest = call.receive<CreateCalendarRequest>()
+                    call.respond(CalendarService().createCalendar(createCalendarRequest))
                 } catch (exception: Exception) {
                     println(exception)
                 }
