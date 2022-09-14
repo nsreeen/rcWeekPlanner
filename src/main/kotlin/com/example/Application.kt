@@ -17,9 +17,9 @@ fun main() {
         configureSerialization()
         DatabaseFactory.init()
         routing {
-            get("/{user_id}") {
+            get("/{user_hash}") {
                 try {
-                    val userId = call.parameters["user_id"]!!
+                    val userId = call.parameters["user_hash"]!!
                     call.respond(UserService().getUser(userId))
                 } catch (exception: Exception) {
                     println(exception)
