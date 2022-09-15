@@ -57,6 +57,7 @@
   <div id="navWrap" style="width:70%;height:80%;position:absolute;top:30%;margin:100 auto;right:0;left:0;"></div>
   <script>
     let calToken = window.location.hash ? window.location.hash.slice(1) : "";
+    console.log(calToken);
     if (calToken) {
       // load cal
       getAndRenderCalendar(calToken, false)
@@ -82,10 +83,13 @@
                   let dayOfWeek = events[i]["dayOfWeek"];
                   let summary = (events[i].id > 0) ? `${events[i]["summary"]} (id:${events[i]["id"]}` : events[i]["summary"];
                   let sd = new Date(events[i]["start"])
-                  let start = `${sd.getHours() - 12}:${sd.getMinutes().toString().padStart(2, '0')}${sd.getHours() < 12 ? "am" : "pm"}`
+                  let start = `${sd.getHours() > 12 ? sd.getHours() - 12 : sd.getHours()}:${sd.getMinutes().toString().padStart(2, '0')}${sd.getHours() < 12 ? "am" : "pm"}`
                   let ed = new Date(events[i]["end"])
-                  let end = `${ed.getHours() - 12}:${ed.getMinutes().toString().padStart(2, '0')}${ed.getHours() < 12 ? "am" : "pm"}`
+                  let end = `${ed.getHours() > 12 ? ed.getHours() - 12 : ed.getHours()}:${ed.getMinutes().toString().padStart(2, '0')}${ed.getHours() < 12 ? "am" : "pm"}`
                   eventsToRender.push([dayOfWeek, start, summary, "#c0c0c0", end]);
+                  if (events[i].id > 0) {
+                    console.log(start, end, summary);
+                  }
             }
             return eventsToRender
     }
@@ -102,9 +106,9 @@
                     let eventsToRender = parseEvents(xMLHttpRequest.response.events);
                     console.log(eventsToRender);
                     if (update) {
-                      PrettyCalendar.updateEvents(eventsToRender);
+                      PrettyCalendar.updateEvents(eventsToRender, 9, 21);
                      } else {
-                      new PrettyCalendar(eventsToRender, "navWrap");
+                      new PrettyCalendar(eventsToRender, "navWrap", 9, 21);
                      }
                 } else {
                     alert("oops, couldn't find that calendar");
