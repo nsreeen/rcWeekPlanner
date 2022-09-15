@@ -34,13 +34,4 @@ class CalendarService {
         )
 
     }
-    private fun buildTimesMap(hours: Int): Map<String,String> {
-        return mapOf(
-            "MONDAY" to getTimeWithDayOffset(hours=hours, dayOffset=1),
-            "TUESDAY" to getTimeWithDayOffset(hours=hours, dayOffset=2),
-            "WEDNESDAY" to getTimeWithDayOffset(hours=hours, dayOffset=3),
-            "THURSDAY" to getTimeWithDayOffset(hours=hours, dayOffset=4),
-            "FRIDAY" to getTimeWithDayOffset(hours=hours, dayOffset=5)
-        )
-    }
 }

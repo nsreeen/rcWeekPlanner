@@ -11,8 +11,7 @@ import io.ktor.client.statement.*
 class EventsService {
     suspend fun getAllEvents(calToken: String, rcToken: String): List<Event> {
         val rcEvents: List<Event> = getRcEvents(rcToken)
-        val internalEventRows: List<EventRow> = Database().getEvents()
-        println(internalEventRows)
+        val internalEventRows: List<EventRow> = Database().getEvents(calToken)
         val internalEvents = internalEventRows.map {row ->
             Event(
                 id=row.id,
@@ -24,10 +23,6 @@ class EventsService {
             )
         }
         val allEvents = rcEvents + internalEvents
-        println("\nall events: ")
-        for (event in allEvents) {
-            println(event)
-        }
         return allEvents
     }
 
@@ -35,36 +30,8 @@ class EventsService {
         val url: String = "https://www.recurse.com/calendar/events.ics?token=%s".format(rcToken)
         val client = HttpClient(CIO)
         val response: HttpResponse = client.get(url)
-        val icsEvents: List<String> = response
-            .bodyAsText().splitToSequence("BEGIN:VEVENT")
-            .filterIndexed { index, _ -> index > 0 }
-            .toList()
-        val allEvents = icsEvents
-            .map {
-                it.lines()
-                    .map { it.split(":") }
-                    .filter { it.size == 2 }
-                    .map { it[0] to it[1] }
-                    .toMap()
-            }
-            .filter { it.contains("SUMMARY") && it.contains("DTSTART;TZID=America/New_York") && it.contains("DTEND;TZID=America/New_York") }
-            .map { it ->
-                val start: String = utcStringFromRcIscString(it.getValue("DTSTART;TZID=America/New_York"))
-                val end: String = utcStringFromRcIscString(it.getValue("DTEND;TZID=America/New_York"))
-                Event(
-                    id = 0,
-                    summary = it.getValue("SUMMARY"),
-                    start = start,
-                    end = end,
-                    dayOfWeek = getDayOfWeek(start),
-                    isRcEvent = true,
-                )
-            }
-        val thisWeeksEvents: List<Event> = allEvents.filter { event -> isThisWeek(event.start) }
-        println("\nrc events: ")
-        for (event in thisWeeksEvents) {
-            println(event)
-        }
+        val events = parseIcsEvents(response.bodyAsText())
+        val thisWeeksEvents: List<Event> = events.filter { event -> isThisWeek(event.start) }
         return thisWeeksEvents
     }
 
@@ -87,5 +54,33 @@ class EventsService {
 
     suspend fun deleteEvent(deleteEventRequest: DeleteEventRequest) {
         Database().deleteEvent(deleteEventRequest.id)
+    }
+
+    private fun parseIcsEvents(ics: String): List<Event> {
+        val icsEvents: List<String> = ics.splitToSequence("BEGIN:VEVENT")
+            .filterIndexed { index, _ -> index > 0 }
+            .toList()
+        return icsEvents
+            .map {
+                it.lines()
+                    .map { it.split(":") }
+                    .filter { it.size == 2 }
+                    .map { it[0] to it[1] }
+                    .toMap()
+            }
+            .filter { it.contains("SUMMARY") && it.contains("DTSTART;TZID=America/New_York") && it.contains("DTEND;TZID=America/New_York") }
+            .map { it ->
+                val start: String = utcStringFromRcIscString(it.getValue("DTSTART;TZID=America/New_York"))
+                val end: String = utcStringFromRcIscString(it.getValue("DTEND;TZID=America/New_York"))
+                Event(
+                    id = 0,
+                    summary = it.getValue("SUMMARY"),
+                    start = start,
+                    end = end,
+                    dayOfWeek = getDayOfWeek(start),
+                    isRcEvent = true,
+                )
+            }
+
     }
 }

@@ -34,14 +34,6 @@ fun main() {
                     println(exception)
                 }
             }
-//            get("/events") {
-//                try {
-//                    val userId = call.request.queryParameters["user_id"]!!
-//                    call.respond(EventsService().getAllEvents(userId))
-//                } catch (exception: Exception) {
-//                    println(exception)
-//                }
-//            }
             post("/events") {
                 try {
                     val createEventRequest = call.receive<CreateEventRequest>()

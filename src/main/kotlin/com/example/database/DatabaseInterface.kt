@@ -4,7 +4,6 @@ import com.example.models.CalendarRow
 import com.example.models.EventRow
 
 interface DatabaseInterface {
-    suspend fun getEvents(): List<EventRow>
     suspend fun getEvents(calToken: String): List<EventRow>
     suspend fun addEvent(calToken: String, summary: String, start: String, end: String,): EventRow?
     suspend fun deleteEvent(id: Int): Boolean

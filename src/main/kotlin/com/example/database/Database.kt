@@ -11,21 +11,8 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 
 class Database: DatabaseInterface {
-    override suspend fun getEvents(): List<EventRow> = dbQuery {
-            EventRows.selectAll().map { row ->
-                EventRow(
-                    id=row[EventRows.id],
-                    calToken=row[EventRows.calToken],
-                    summary=row[EventRows.summary],
-                    start=row[EventRows.start],
-                    end=row[EventRows.end],
-
-                )
-            }
-        }
-
-    override suspend fun getEvents(calToken: String): List<EventRow> {
-        return EventRows.select { EventRows.calToken eq calToken }
+    override suspend fun getEvents(calToken: String): List<EventRow> = dbQuery {
+        EventRows.select { EventRows.calToken eq calToken }
             .map { row ->
                 EventRow(
                     id=row[EventRows.id],

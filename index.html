@@ -98,13 +98,17 @@
           xMLHttpRequest.send();
           xMLHttpRequest.onload = function () {
                 console.log(xMLHttpRequest.response);
-                let eventsToRender = parseEvents(xMLHttpRequest.response.events);
-                console.log(eventsToRender);
-                if (update) {
-                  PrettyCalendar.updateEvents(eventsToRender);
-                 } else {
-                  new PrettyCalendar(eventsToRender, "navWrap");
-                 }
+                if (xMLHttpRequest.response) {
+                    let eventsToRender = parseEvents(xMLHttpRequest.response.events);
+                    console.log(eventsToRender);
+                    if (update) {
+                      PrettyCalendar.updateEvents(eventsToRender);
+                     } else {
+                      new PrettyCalendar(eventsToRender, "navWrap");
+                     }
+                } else {
+                    alert("oops, couldn't find that calendar");
+                }
           }
     }
 
