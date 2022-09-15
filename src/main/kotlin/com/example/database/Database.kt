@@ -15,7 +15,7 @@ class Database: DatabaseInterface {
             EventRows.selectAll().map { row ->
                 EventRow(
                     id=row[EventRows.id],
-                    calendarId=row[EventRows.calendarId],
+                    calToken=row[EventRows.calToken],
                     summary=row[EventRows.summary],
                     start=row[EventRows.start],
                     end=row[EventRows.end],
@@ -24,12 +24,12 @@ class Database: DatabaseInterface {
             }
         }
 
-    override suspend fun getEvents(calendarId: Int): List<EventRow> {
-        return EventRows.select { EventRows.calendarId eq calendarId }
+    override suspend fun getEvents(calToken: String): List<EventRow> {
+        return EventRows.select { EventRows.calToken eq calToken }
             .map { row ->
                 EventRow(
                     id=row[EventRows.id],
-                    calendarId=row[EventRows.calendarId],
+                    calToken=row[EventRows.calToken],
                     summary=row[EventRows.summary],
                     start=row[EventRows.start],
                     end=row[EventRows.end],
@@ -39,13 +39,13 @@ class Database: DatabaseInterface {
     }
 
     override suspend fun addEvent(
-        userId: Int,
+        calToken: String,
         summary: String,
         start: String,
         end: String,
     ): EventRow? = dbQuery {
             val insertStatement = EventRows.insert {
-                it[EventRows.calendarId] = userId
+                it[EventRows.calToken] = calToken
                 it[EventRows.summary] = summary
                 it[EventRows.start] = start
                 it[EventRows.end] = end
@@ -53,7 +53,7 @@ class Database: DatabaseInterface {
             insertStatement.resultedValues?.singleOrNull()?.let { row ->
                 EventRow(
                     id = row[EventRows.id],
-                    calendarId=row[EventRows.calendarId],
+                    calToken=row[EventRows.calToken],
                     summary = row[EventRows.summary],
                     start = row[EventRows.start],
                     end = row[EventRows.end],
@@ -66,10 +66,10 @@ class Database: DatabaseInterface {
     }
 
 
-    override suspend fun createCalendar(id: Int, token: String, name: String, online: String, offline: String): CalendarRow? = dbQuery {
+    override suspend fun createCalendar(token: String, name: String, online: String, offline: String, rcToken: String): CalendarRow? = dbQuery {
             val insertStatement = CalendarRows.insert {
-                it[CalendarRows.id] = id
                 it[CalendarRows.token] = token
+                it[CalendarRows.rcToken] = rcToken
                 it[CalendarRows.name] = name
                 it[CalendarRows.online] = online
                 it[CalendarRows.offline] = offline
@@ -81,6 +81,7 @@ class Database: DatabaseInterface {
                     name = row[CalendarRows.name],
                     online = row[CalendarRows.online],
                     offline = row[CalendarRows.offline],
+                    rcToken = row[CalendarRows.rcToken],
                     )
             }
         }
@@ -95,6 +96,7 @@ class Database: DatabaseInterface {
                     name = row[CalendarRows.name],
                     online = row[CalendarRows.online],
                     offline = row[CalendarRows.offline],
+                    rcToken = row[CalendarRows.rcToken],
                 )
             }.firstOrNull()
     }

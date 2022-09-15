@@ -9,8 +9,8 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 
 class EventsService {
-    suspend fun getAllEvents(userId: String): List<Event> {
-        val rcEvents: List<Event> = getRcEvents(userId)
+    suspend fun getAllEvents(calToken: String, rcToken: String): List<Event> {
+        val rcEvents: List<Event> = getRcEvents(rcToken)
         val internalEventRows: List<EventRow> = Database().getEvents()
         println(internalEventRows)
         val internalEvents = internalEventRows.map {row ->
@@ -31,14 +31,8 @@ class EventsService {
         return allEvents
     }
 
-    suspend fun getRcEvents(userId: String): List<Event> {
-        val userRcToken: String = "1234"//CalendarService().getUserRcToken(userId)
-        val allEvents = getAllRcEvents(userRcToken)
-        val thisWeeksEvents: List<Event> = allEvents.filter { event -> isThisWeek(event.start) }
-        return thisWeeksEvents
-    }
-    private suspend fun getAllRcEvents(userRcToken: String): List<Event> {
-        val url: String = "https://www.recurse.com/calendar/events.ics?token=%s".format(userRcToken)
+    suspend fun getRcEvents(rcToken: String): List<Event> {
+        val url: String = "https://www.recurse.com/calendar/events.ics?token=%s".format(rcToken)
         val client = HttpClient(CIO)
         val response: HttpResponse = client.get(url)
         val icsEvents: List<String> = response
@@ -66,14 +60,19 @@ class EventsService {
                     isRcEvent = true,
                 )
             }
-        return allEvents
+        val thisWeeksEvents: List<Event> = allEvents.filter { event -> isThisWeek(event.start) }
+        println("\nrc events: ")
+        for (event in thisWeeksEvents) {
+            println(event)
+        }
+        return thisWeeksEvents
     }
 
     suspend fun createEvent(createEventRequest: CreateEventRequest): Event {
         val start = utcStringFromHourAndDay(createEventRequest.start, createEventRequest.day)
         val end = utcStringFromHourAndDay(createEventRequest.end, createEventRequest.day)
 
-        val eventRow = Database().addEvent(createEventRequest.userId, createEventRequest.summary, start, end)
+        val eventRow = Database().addEvent(createEventRequest.calToken, createEventRequest.summary, start, end)
 
         return Event(
             id=eventRow!!.id,

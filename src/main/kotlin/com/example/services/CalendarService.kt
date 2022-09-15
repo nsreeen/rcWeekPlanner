@@ -4,7 +4,7 @@ import com.example.Modules.getTimeWithDayOffset
 import com.example.models.CalendarResponse
 import com.example.models.CreateCalendarRequest
 import com.example.models.Event
-import com.example.models.User
+import com.example.database.Database
 
 
 class CalendarService {
@@ -12,19 +12,23 @@ class CalendarService {
         return CalendarResponse(
             calToken="1234",
             name="TestName",
-            startTime="1",
-            endTime="2",
+            onlineTime="1",
+            offlineTime="2",
             events=emptyList<Event>(),
         )
     }
-    fun createCalendar(createCalendarRequest: CreateCalendarRequest): CalendarResponse {
+    suspend fun createCalendar(createCalendarRequest: CreateCalendarRequest): CalendarResponse {
+        val token = java.util.UUID.randomUUID().toString()
+        val calendarRow = Database().createCalendar(token, createCalendarRequest.name, createCalendarRequest.online, createCalendarRequest.offline, createCalendarRequest.rcToken)
+        val events = EventsService().getRcEvents(createCalendarRequest.rcToken)
         return CalendarResponse(
-            calToken="1234",
-            name="TestName",
-            startTime="1",
-            endTime="2",
-            events=emptyList<Event>(),
+            calToken=calendarRow!!.token,
+            name=calendarRow!!.name,
+            onlineTime=calendarRow!!.online,
+            offlineTime=calendarRow!!.offline,
+            events=events,
         )
+
     }
     private fun buildTimesMap(hours: Int): Map<String,String> {
         return mapOf(

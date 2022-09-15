@@ -8,6 +8,7 @@ data class CalendarRow (
     val name: String,
     val online: String,
     val offline: String,
+    val rcToken: String,
 )
 
 object CalendarRows: Table() {
@@ -16,6 +17,7 @@ object CalendarRows: Table() {
     val name = varchar("name", 1024)
     val online = varchar("online", 128)
     val offline = varchar("offline", 128)
+    val rcToken = varchar("rcToken", 1024)
 
     override val primaryKey = PrimaryKey(id)
 }
