@@ -69,11 +69,12 @@ class EventsService {
     }
 
     suspend fun createEvent(createEventRequest: CreateEventRequest): Event {
+        println("creating event")
         val start = utcStringFromHourAndDay(createEventRequest.start, createEventRequest.day)
         val end = utcStringFromHourAndDay(createEventRequest.end, createEventRequest.day)
 
         val eventRow = Database().addEvent(createEventRequest.calToken, createEventRequest.summary, start, end)
-
+        println(eventRow)
         return Event(
             id=eventRow!!.id,
             summary=eventRow!!.summary,

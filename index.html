@@ -22,18 +22,14 @@
     margin: 20px;
    }
 
+   .subpanels {
+      background-color: #404040;
+      margin: 5px;
+   }
+
 </style>
 
 <body>
-
-  <div id="getCalendarPanel">
-    Create a calendar!
-    Name: <input id="calName">
-    Start Time: <input id="calStartTime">
-    End Time: <input id="calEndTime">
-    RC token: <input id="rcToken">
-    <button id="createCalendarSubmit">Submit</button>
-  </div>
 
   <div id="createCalendarPanel" class="panels">
     Load a calendar!
@@ -41,8 +37,8 @@
     <button id="getCalendarSubmit">Submit</button>
   </div>
 
-  <div id="editEventsPanel">
-    <div id="addEventPanel">
+  <div id="editEventsPanel" class="panels">
+    <div id="addEventPanel" class="subpanels">
       Add an event!
       Summary: <input id="summary">
       Start: <input id="start">
@@ -51,23 +47,35 @@
       <button id="createEventSubmit">Submit</button>
     </div>
 
-    <div id="deleteEventPanel">
+    <div id="deleteEventPanel" class="subpanels">
       Delete an event:
       Event ID: <input id="deleteId">
       <button id="delete">Delete</button>
     </div>
   </div>
-  <div id="navWrap" style="width:70%;height:80%;position:absolute;top:30%;margin:100 auto;right:0;left:0;"></div>
 
+  <div id="navWrap" style="width:70%;height:80%;position:absolute;top:30%;margin:100 auto;right:0;left:0;"></div>
   <script>
-    let calToken = window.location.hash;
+    let calToken = window.location.hash ? window.location.hash.slice(1) : "";
     if (calToken) {
       // load cal
-      getAndRenderCalendar(calToken.slice(1))
+      getAndRenderCalendar(calToken, false)
+      document.getElementById("editEventsPanel").style.display = "block";
+      document.getElementById("createEventSubmit").addEventListener("click", function () {
+        createEvent()
+      })
+      document.getElementById("delete").addEventListener("click", function () {
+          deleteEvent()
+      })
     } else {
       // allow cal to be created
       document.getElementById("createCalendarPanel").style.display = "block";
+      document.getElementById("createCalendarSubmit").addEventListener("click", function () {
+        createCalendar()
+    })
     }
+
+
     function parseEvents(events) {
             let eventsToRender = [];
             for (let i = 0; i < events.length; i++) {
@@ -82,7 +90,7 @@
             return eventsToRender
     }
 
-    function getAndRenderCalendar(calToken) {
+    function getAndRenderCalendar(calToken, update) {
           console.log(calToken);
           const xMLHttpRequest = new XMLHttpRequest();
           xMLHttpRequest.responseType = "json";
@@ -92,29 +100,33 @@
                 console.log(xMLHttpRequest.response);
                 let eventsToRender = parseEvents(xMLHttpRequest.response.events);
                 console.log(eventsToRender);
-                var prettyCal = new PrettyCalendar(eventsToRender, "navWrap");
-                document.getElementById("editEventsPanel").style.display = "block";
+                if (update) {
+                  PrettyCalendar.updateEvents(eventsToRender);
+                 } else {
+                  new PrettyCalendar(eventsToRender, "navWrap");
+                 }
           }
     }
 
-    document.getElementById("createEventSubmit").addEventListener("click", function () {
-        const postHttp = new XMLHttpRequest()
-        postHttp.open('POST', "http://0.0.0.0:8080/events")
-        postHttp.setRequestHeader('Content-type', 'application/json')
-        let data = {
-              summary:document.getElementById("summary").value,
-              start:document.getElementById("start").value,
-              end:document.getElementById("end").value,
-              day:document.getElementById("day").value,
-              userId:1234
-        }
-        postHttp.send(JSON.stringify(data))
-        postHttp.onload = function() {
-            alert(postHttp.responseText)
-        }
-    })
+    function createEvent() {
+          const postHttp = new XMLHttpRequest()
+          postHttp.open('POST', "http://0.0.0.0:8080/events")
+          postHttp.setRequestHeader('Content-type', 'application/json')
+          let data = {
+                summary:document.getElementById("summary").value,
+                start:document.getElementById("start").value,
+                end:document.getElementById("end").value,
+                day:document.getElementById("day").value,
+                calToken: calToken,
+          }
+          postHttp.send(JSON.stringify(data))
+          postHttp.onload = function() {
+              console.log(postHttp.responseText);
+              getAndRenderCalendar(calToken, true)
+          }
+    }
 
-    document.getElementById("delete").addEventListener("click", function () {
+    function deleteEvent() {
         const postHttp = new XMLHttpRequest()
         postHttp.open('DELETE', "http://0.0.0.0:8080/events")
         postHttp.setRequestHeader('Content-type', 'application/json')
@@ -123,11 +135,12 @@
         }
         postHttp.send(JSON.stringify(data))
         postHttp.onload = function() {
-            alert(postHttp.responseText)
+            console.log("delete response" + postHttp.responseText)
+            getAndRenderCalendar(calToken, true)
         }
-    })
+    }
 
-    document.getElementById("createCalendarSubmit").addEventListener("click", function () {
+    function createCalendar() {
         const postHttp = new XMLHttpRequest()
         postHttp.open('POST', "http://0.0.0.0:8080/calendars")
         postHttp.setRequestHeader('Content-type', 'application/json')
@@ -139,10 +152,9 @@
         }
         postHttp.send(JSON.stringify(data))
         postHttp.onload = function() {
-            alert(postHttp.responseText)
+            console.log(postHttp.responseText)
         }
-    })
-
+    }
   </script>
 </body>
 
