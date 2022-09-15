@@ -4,7 +4,7 @@ PrettyCalendar.UNDEFINED_TIME = -2;
 PrettyCalendar.EVENT_PADDING = 10;
 PrettyCalendar.prototype.wrappingDiv;
 
-function PrettyCalendar(events, divToPut, navigation, customLabels) {
+function PrettyCalendar(events, divToPut, navigation, customLabels, start, end) {
     if (typeof navigation == 'undefined') navigation = false;
     if (typeof customLabels == 'undefined') {
         var weekday = new Array(5);
@@ -94,6 +94,7 @@ PrettyCalendar.prototype.genCalendar = function (customLabels) {
     $(calendarDiv).attr("id", "calendar");
     var sidebarDiv = document.createElement("div");
     $(sidebarDiv).attr("id", "sidebar");
+    //for (var i = 3; i < 9; i++) {
     for (var i = 0; i < 12; i++) {
         var timeLabelDiv = document.createElement("div");
         $(timeLabelDiv).attr("class", "timeLabel");
@@ -114,6 +115,7 @@ PrettyCalendar.prototype.genCalendar = function (customLabels) {
         dayLabelText = customLabels[i];
         $(dayLabel).text(dayLabelText);
         dayDiv.appendChild(dayLabel);
+        //for (var j = 0; j < 11; j++) {
         for (var j = 0; j < 23; j++) {
             var tempDiv = document.createElement("div");
             $(tempDiv).attr("class", "sep");
@@ -138,6 +140,9 @@ PrettyCalendar.timeToHours = function (formatted) {
 }
 
 PrettyCalendar.hoursToPercent = function (hours) {
+    //    let result = (100 * (hours-6) / 12) + 4.16;
+    //        console.log(hours, result);
+    //        return result;
     return (100 * hours / 24) + 4.16;
 }
 
@@ -153,6 +158,14 @@ PrettyCalendar.populateEvents = function (eventsToday) {
         }
         for (var i = 0; i < eventsToday[j].length; i++) {
             counterTemp++;
+
+            //            var timeHours = PrettyCalendar.timeToHours(eventsToday[j][i][0]); // start time
+            //            var startOffset = PrettyCalendar.hoursToPercent(timeHours); //start offset startOffset
+            //            var height = (PrettyCalendar.hoursToPercent(PrettyCalendar.timeToHours(eventsToday[j][i][3])) - startOffset);
+            //            var lastPercentTemp = PrettyCalendar.hoursToPercent(lastTime);
+            //            console.log(eventsToday[j][i][1], timeHours, startOffset, lastPercentTemp, height, "\n")
+            //            if ($("#calendar").height() * lastPercentTemp / 100 + $("#event" + (counterTemp - 1)).innerHeight() + PrettyCalendar.EVENT_PADDING > $("#calendar").height() * startOffset / 100) {
+
             var timeHours = PrettyCalendar.timeToHours(eventsToday[j][i][0]);
             var percentTemp = PrettyCalendar.hoursToPercent(timeHours);
             var lastPercentTemp = PrettyCalendar.hoursToPercent(lastTime);
@@ -168,8 +181,10 @@ PrettyCalendar.populateEvents = function (eventsToday) {
             $(eventTempDiv).attr("id", "event" + (counterTemp));
             var heightSet = "height:auto;";
             if (eventsToday[j][i].length > 3) {
+                //heightSet = "height:" + height + "%;";
                 heightSet = "height:" + (PrettyCalendar.hoursToPercent(PrettyCalendar.timeToHours(eventsToday[j][i][3])) - percentTemp) + "%;";
             }
+            //$(eventTempDiv).attr("style", "top:" + startOffset + "%;width:" + formatWidth + "%;background-color:" + eventsToday[j][i][2] + ";left:" + (100 - formatWidth) + "%;" + heightSet);
             $(eventTempDiv).attr("style", "top:" + percentTemp + "%;width:" + formatWidth + "%;background-color:" + eventsToday[j][i][2] + ";left:" + (100 - formatWidth) + "%;" + heightSet);
             if (formatWidth != 100) {
                 for (var x = 0; x < numToCompress - 1; x++) {
