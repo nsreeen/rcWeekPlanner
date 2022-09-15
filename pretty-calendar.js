@@ -11,17 +11,15 @@ function PrettyCalendar(events, divToPut, start, end, navigation, customLabels) 
     if (typeof navigation == 'undefined') navigation = false;
     if (typeof customLabels == 'undefined') {
         var weekday = new Array(5);
-//        weekday[0] = "Sunday";
         weekday[0] = "Monday";
         weekday[1] = "Tuesday";
         weekday[2] = "Wednesday";
         weekday[3] = "Thursday";
         weekday[4] = "Friday";
-//        weekday[6] = "Saturday";
         customLabels = weekday;
     }
     this.wrappingDiv = divToPut;
-    this.genCalendar(customLabels, timeRange);
+    this.genCalendar(customLabels, timeRange, start, end);
     if (navigation) {
         PrettyCalendar.addNavigation();
     }
@@ -51,9 +49,6 @@ PrettyCalendar.arrangeInDays = function (events) {
             dayToArrange = 4;
             break;
         }
-        // input = [[dayOfWeek, start, summary, "#c0c0c0", end]]
-        // [[], [], [], [], []] //mon/tue etc
-        //[[start, summary, "#c0c0c0", end]..
         var tempIndex = eventsToday[dayToArrange].length;
         eventsToday[dayToArrange][tempIndex] = [];
         eventsToday[dayToArrange][tempIndex][0] = events[i][1];
@@ -66,7 +61,7 @@ PrettyCalendar.arrangeInDays = function (events) {
     return eventsToday;
 }
 
-PrettyCalendar.prototype.genCalendar = function (customLabels, timeRange) {
+PrettyCalendar.prototype.genCalendar = function (customLabels, timeRange, start, end) {
     $("#" + this.wrappingDiv).css("font-family", "Tahoma,Arial,sans-serif");
     $("#" + this.wrappingDiv).css("overflow-x", "hidden");
     $("#" + this.wrappingDiv).css("overflow-y", "hidden");
@@ -78,14 +73,18 @@ PrettyCalendar.prototype.genCalendar = function (customLabels, timeRange) {
     $(calendarDiv).attr("id", "calendar");
     var sidebarDiv = document.createElement("div");
     $(sidebarDiv).attr("id", "sidebar");
-    for (var i = 0; i < (timeRange/2); i++) { //TODO (hours/2)
-    //for (var i = 0; i < 12; i++) { // adds hour labels
+    for (var i = start; i < end; i+=2) { //sets the time labels on the left margin
         var timeLabelDiv = document.createElement("div");
         $(timeLabelDiv).attr("class", "timeLabel");
-        var textLabel = "12";
-        if (i > 0) textLabel = i * 2 - (12 * (i > 6));
-        if (i < 6) textLabel += "am";
-        else textLabel += "pm";
+        if (i==0) {
+            textLabel = "12am"
+        } else if (i==12) {
+            textLabel = "12pm"
+        } else if (i > 12) {
+            textLabel = `${i-12}pm`
+        } else {
+            textLabel = `${i}am`
+        }
         $(timeLabelDiv).text(textLabel);
         sidebarDiv.appendChild(timeLabelDiv);
     }
@@ -99,8 +98,7 @@ PrettyCalendar.prototype.genCalendar = function (customLabels, timeRange) {
         dayLabelText = customLabels[i];
         $(dayLabel).text(dayLabelText);
         dayDiv.appendChild(dayLabel);
-        for (var j = 0; j < (timeRange-1); j++) { //TODO (hours-1)
-        //for (var j = 0; j < 23; j++) { // sets the separators
+        for (var j = 0; j < (timeRange-1); j++) {  // sets the separators (horizontal lines)
             var tempDiv = document.createElement("div");
             $(tempDiv).attr("class", "sep");
             dayDiv.appendChild(tempDiv);
