@@ -1,3 +1,5 @@
+// This code is from: https://github.com/neelsomani/pretty-calendar
+
 PrettyCalendar.prototype.weekView = true;
 PrettyCalendar.prototype.transition = false;
 PrettyCalendar.UNDEFINED_TIME = -2;
