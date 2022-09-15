@@ -87,8 +87,8 @@ class Database: DatabaseInterface {
         }
 
 
-    override suspend fun getCalendar(token: String): CalendarRow? {
-        return CalendarRows.select { CalendarRows.token eq token }
+    override suspend fun getCalendar(token: String): CalendarRow? = dbQuery {
+        CalendarRows.select { CalendarRows.token eq token }
             .map { row ->
                 CalendarRow(
                     id = row[CalendarRows.id],
