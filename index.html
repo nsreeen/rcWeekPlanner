@@ -60,8 +60,8 @@
     console.log(calToken);
     if (calToken) {
       // load cal
-      getAndRenderCalendar(calToken, false)
       document.getElementById("editEventsPanel").style.display = "block";
+      getAndRenderCalendar(calToken, false);
       document.getElementById("createEventSubmit").addEventListener("click", function () {
         createEvent()
       })
@@ -81,7 +81,7 @@
             let eventsToRender = [];
             for (let i = 0; i < events.length; i++) {
                   let dayOfWeek = events[i]["dayOfWeek"];
-                  let summary = (events[i].id > 0) ? `${events[i]["summary"]} (id:${events[i]["id"]}` : events[i]["summary"];
+                  let summary = (events[i].id > 0) ? `${events[i]["summary"]} (id:${events[i]["id"]})` : events[i]["summary"];
                   let sd = new Date(events[i]["start"])
                   let start = `${sd.getHours() > 12 ? sd.getHours() - 12 : sd.getHours()}:${sd.getMinutes().toString().padStart(2, '0')}${sd.getHours() < 12 ? "am" : "pm"}`
                   let ed = new Date(events[i]["end"])
