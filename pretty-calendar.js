@@ -98,7 +98,7 @@ PrettyCalendar.prototype.genCalendar = function (customLabels, timeRange, start,
         dayLabelText = customLabels[i];
         $(dayLabel).text(dayLabelText);
         dayDiv.appendChild(dayLabel);
-        for (var j = 0; j < (timeRange-1); j++) {  // sets the separators (horizontal lines)
+        for (var j = 0; j < timeRange+1; j++) {  // sets the separators (horizontal lines)
             var tempDiv = document.createElement("div");
             $(tempDiv).attr("class", "sep");
             dayDiv.appendChild(tempDiv);
@@ -126,7 +126,7 @@ PrettyCalendar.timeToHours = function (formatted) {
 }
 
 PrettyCalendar.hoursToPercent = function (hours, timeRange) {
-    return (100 * hours / timeRange) ;//+ ((24/timeRange) * 4.16); //TODO hours and offset
+    return (100 * hours / timeRange) + ((24/timeRange) * 4.16); //TODO hours and offset
 }
 
 function overlapsWithLastEvent(eventStart, eventEnd, lastEventStart, lastEventEnd) {
@@ -220,7 +220,7 @@ PrettyCalendar.populateEvents = function (eventsToday, timeRange, start, end) {
 PrettyCalendar.updateEvents = function (events, start, end) {
     var timeRange = end - start;
     $(".event").remove();
-    PrettyCalendar.commitEvents(events, timeRange); //todo
+    PrettyCalendar.commitEvents(events, timeRange, start, end);
 }
 
 PrettyCalendar.prototype.initTransitions = function () {
