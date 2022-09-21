@@ -32,9 +32,12 @@
 <body>
 
   <div id="createCalendarPanel" class="panels">
-    Load a calendar!
-    Calendar token: <input id="calToken">
-    <button id="getCalendarSubmit">Submit</button>
+    Create a calendar!
+    name: <input id="calName">
+    start time: <input id="calStart">
+    end time: <input id="calEnd">
+    rc token: <input id="rcToken">
+    <button id="createCalendarSubmit">Submit</button>
   </div>
 
   <div style="width:100%;height:100%;display:block;">
@@ -109,14 +112,18 @@
                     let eventsToRender = parseEvents(xMLHttpRequest.response.events);
                     console.log(eventsToRender);
                     if (update) {
-                      PrettyCalendar.updateEvents(eventsToRender, 9, 21);
+                      PrettyCalendar.updateEvents(eventsToRender, 11, 23);
                      } else {
-                      new PrettyCalendar(eventsToRender, "navWrap", 9, 21);
+                      new PrettyCalendar(eventsToRender, "navWrap", 11, 23);
                      }
                 } else {
                     alert("oops, couldn't find that calendar");
                 }
           }
+    }
+
+    function dayAndTimeToDate(day, time) {
+
     }
 
     function createEvent() {
@@ -157,8 +164,8 @@
         postHttp.setRequestHeader('Content-type', 'application/json')
         let data = {
               name:document.getElementById("calName").value,
-              online:document.getElementById("calStartTime").value,
-              offline:document.getElementById("calEndTime").value,
+              online:document.getElementById("calStart").value,
+              offline:document.getElementById("calEnd").value,
               rcToken:document.getElementById("rcToken").value,
         }
         postHttp.send(JSON.stringify(data))
