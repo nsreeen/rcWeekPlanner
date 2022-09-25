@@ -17,7 +17,8 @@ fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
         configureHTTP()
         configureSerialization()
-        DatabaseFactory.init(environment.config)
+        val databaseUrl = System.getenv("DATABASE_URL")
+        DatabaseFactory.init(databaseUrl)
         routing {
             get("/") {
                 call.respond("hello")

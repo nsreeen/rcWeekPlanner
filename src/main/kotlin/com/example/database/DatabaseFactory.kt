@@ -6,12 +6,9 @@ import org.jetbrains.exposed.sql.transactions.*
 import org.jetbrains.exposed.sql.transactions.experimental.*
 
 object DatabaseFactory {
-    fun init(config: ApplicationConfig) {
-        val driverClassName = "org.h2.Driver"
-        val jdbcURL = "jdbc:h2:file:./build/db"
-        //        val driverClassName = config.property("storage.driverClassName").getString()
-        //        val jdbcURL = config.property("storage.jdbcURL").getString()
-        val database = Database.connect(jdbcURL, driverClassName)
+    fun init(dbUrl: String) {
+        val driverClassName = "org.postgresql.Driver"
+        val database = Database.connect(dbUrl, driverClassName)
         transaction(database) {
             SchemaUtils.create(EventRows)
             SchemaUtils.create(CalendarRows)
