@@ -8,3 +8,4 @@ This project is a personal RC calendar viewer, and it also allows custom calenda
 - [ ] Use datetime input for creating custom events
 - [ ] Style create & delete panels
 - [ ] Set page title
+- [ ] Fix event widths bug
