@@ -16,6 +16,7 @@ object DatabaseFactory {
         val dbname = parts[4]
         val url = "jdbc:postgresql://$host:$port/$dbname"
         val driverClassName = "org.postgresql.Driver"
+        //val jdbcURL = "jdbc:postgresql://db:5432/localdb?user=postgres"
         val database = Database.connect(url, driverClassName, user=username, password=password)
         transaction(database) {
             SchemaUtils.create(EventRows)
