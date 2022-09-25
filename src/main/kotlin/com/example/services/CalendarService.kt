@@ -8,9 +8,7 @@ import com.example.database.Database
 
 class CalendarService {
     suspend fun getCalendar(calToken: String): CalendarResponse {
-        println("hello")
         val calendarRow = Database().getCalendar(calToken)
-        println(calendarRow)
         val events = EventsService().getAllEvents(calToken, calendarRow!!.rcToken)
         return CalendarResponse(
             calToken=calendarRow!!.token,
