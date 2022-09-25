@@ -62,6 +62,7 @@
   </div>
 
   <script>
+    let baseUrl = "https://rccal.fly.dev"
     let calToken = window.location.hash ? window.location.hash.slice(1) : "";
     console.log(calToken);
     if (calToken) {
@@ -104,7 +105,7 @@
           console.log(calToken);
           const xMLHttpRequest = new XMLHttpRequest();
           xMLHttpRequest.responseType = "json";
-          xMLHttpRequest.open("GET", `http://0.0.0.0:8080/calendars/${calToken}`);
+          xMLHttpRequest.open("GET", `${baseUrl}/calendars/${calToken}`);
           xMLHttpRequest.send();
           xMLHttpRequest.onload = function () {
                 console.log(xMLHttpRequest.response);
@@ -128,7 +129,7 @@
 
     function createEvent() {
           const postHttp = new XMLHttpRequest()
-          postHttp.open('POST', "http://0.0.0.0:8080/events")
+          postHttp.open('POST', `${baseUrl}/events`)
           postHttp.setRequestHeader('Content-type', 'application/json')
           let data = {
                 summary:document.getElementById("summary").value,
@@ -146,7 +147,7 @@
 
     function deleteEvent() {
         const postHttp = new XMLHttpRequest()
-        postHttp.open('DELETE', "http://0.0.0.0:8080/events")
+        postHttp.open('DELETE', `${baseUrl}/events`)
         postHttp.setRequestHeader('Content-type', 'application/json')
         let data = {
               id:document.getElementById("deleteId").value,
@@ -160,7 +161,7 @@
 
     function createCalendar() {
         const postHttp = new XMLHttpRequest()
-        postHttp.open('POST', "http://0.0.0.0:8080/calendars")
+        postHttp.open('POST', `${baseUrl}/calendars`)
         postHttp.setRequestHeader('Content-type', 'application/json')
         let data = {
               name:document.getElementById("calName").value,
