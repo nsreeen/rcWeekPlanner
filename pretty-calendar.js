@@ -6,7 +6,7 @@ PrettyCalendar.UNDEFINED_TIME = -2;
 PrettyCalendar.EVENT_PADDING = 10;
 PrettyCalendar.prototype.wrappingDiv;
 
-function PrettyCalendar(events, divToPut, start, end, navigation, customLabels) { // 9am 6pm
+function PrettyCalendar(events, divToPut, start, end, navigation, customLabels) {
     var timeRange = end - start;
     if (typeof navigation == 'undefined') navigation = false;
     if (typeof customLabels == 'undefined') {
@@ -126,7 +126,7 @@ PrettyCalendar.timeToHours = function (formatted) {
 }
 
 PrettyCalendar.hoursToPercent = function (hours, timeRange) {
-    return (100 * hours / timeRange) + ((24/timeRange) * 4.16); //TODO hours and offset
+    return (100 * hours / timeRange) + ((24/timeRange) * 4.16);
 }
 
 function overlapsWithLastEvent(eventStart, eventEnd, lastEventStart, lastEventEnd) {
@@ -149,7 +149,6 @@ PrettyCalendar.populateEvents = function (eventsToday, timeRange, start, end) {
         var lastEventEndHours = PrettyCalendar.UNDEFINED_TIME;
         var lastEventSummary = "";
         var lastEventStartHours = PrettyCalendar.UNDEFINED_TIME;
-        console.log("\n\nNEW DAY " + j)
         var numToCompress = 1;
         if (eventsToday[j].length != 0) {
             eventsToday[j] = eventsToday[j].sort(function (a, b) {
@@ -162,7 +161,6 @@ PrettyCalendar.populateEvents = function (eventsToday, timeRange, start, end) {
             var lastEventSummary = eventSummary;
             var lastEventEndHours = eventEndHours;
             var lastEventStartHours = eventStartHours;
-            console.log("\n " + eventSummary, j)
 
             var eventStart = eventsToday[j][i][0];
             var eventSummary = eventsToday[j][i][1];

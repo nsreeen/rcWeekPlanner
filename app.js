@@ -3,7 +3,6 @@ let baseUrl = "http://0.0.0.0:8080" //"https://rccal.fly.dev"
 function parseEvents(events) {
     let eventsToRender = [];
     for (let i = 0; i < events.length; i++) {
-          console.log(events[i]);
           let dayOfWeek = events[i]["dayOfWeek"];
           let summary = (events[i].id > 0) ? `${events[i]["summary"]} (id:${events[i]["id"]})` : events[i]["summary"];
           let sd = new Date(events[i]["start"])
@@ -16,18 +15,23 @@ function parseEvents(events) {
 }
 
 function getCalendar(calToken, renderCallback) {
-      console.log("hello")
       const xMLHttpRequest = new XMLHttpRequest();
       xMLHttpRequest.responseType = "json";
       xMLHttpRequest.open("GET", `${baseUrl}/calendars/${calToken}`);
       xMLHttpRequest.responseType = "json";
       xMLHttpRequest.send();
       xMLHttpRequest.onload = function () {
-            console.log(xMLHttpRequest.response);
             if (xMLHttpRequest.response) {
-                console.log("here", typeof xMLHttpRequest.response);
                 let eventsToRender = parseEvents(xMLHttpRequest.response.events);
-                var calendar = eventsToRender
+                let onlineHour = new Date(xMLHttpRequest.response.onlineTime).getHours();
+                let offlineHour = new Date(xMLHttpRequest.response.offlineTime).getHours();
+                var calendar = {
+                  name: xMLHttpRequest.response.name,
+                  onlineHour: onlineHour,
+                  offlineHour: offlineHour,
+                  events: eventsToRender,
+                };
+                console.log(calendar);
             } else {
                 var calendar = null
             }
@@ -67,14 +71,19 @@ function deleteEvent(id, renderCallback) {
 }
 
 function createCalendar(name, online, offline, rcToken, renderCallback) {
+    let startTime = new Date();
+    startTime.setHours(online.split(":")[0]);
+    let endTime = new Date();
+    endTime.setHours(offline.split(":")[0]);
+
     const postHttp = new XMLHttpRequest()
     postHttp.open('POST', `${baseUrl}/calendars`)
     postHttp.setRequestHeader('Content-type', 'application/json')
     postHttp.responseType = "json";
     let data = {
           name:name,
-          online:online,
-          offline:offline,
+          online:startTime,
+          offline:endTime,
           rcToken:rcToken,
     }
     postHttp.send(JSON.stringify(data))

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <meta charset="UTF-8">
-<title>Page Title</title>
+<title>RCCal</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" type="text/css" href="pretty-calendar.css">
 <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
@@ -35,8 +35,17 @@
   <div id="createCalendarPanel" class="panels">
     Create a calendar!
     name: <input id="calName">
-    start time: <input id="calStart">
-    end time: <input id="calEnd">
+<!--    start time: <input id="calStart">-->
+<!--    end time: <input id="calEnd">-->
+
+    <label for="calStart">Calendar start time/ online time:</label>
+    <input type="time" id="calStart" name="calStart"
+           min="00:00" max="00:00" required>
+
+    <label for="calEnd">Calendar end time/ offline time:</label>
+    <input type="time" id="calEnd" name="calEnd"
+           min="00:00" max="00:00" required>
+
     rc token: <input id="rcToken">
     <button id="createCalendarSubmit">Submit</button>
   </div>
@@ -45,25 +54,21 @@
   </div>
 
   <div style="width:100%;height:100%;display:block;">
-    <div id="navWrap" style="width:70%;height:80%;position:absolute;top:30%;margin:50px;right:0;left:0;"></div>
+    <div id="navWrap" style="width:70%;height:70%;position:absolute;top:10%;margin:50px;right:0;left:0;"></div>
   </div>
 
   <div id="editEventsPanel" class="panels">
     <div id="addEventPanel" class="subpanels">
       Add an event!
       Summary: <input id="summary">
-<!--      &lt;!&ndash;      Start: <input id="start">&ndash;&gt;-->
-
       <label for="start-time">Start time:</label>
       <input type="datetime-local" id="start-time"
              name="start-time" value="2022-09-12T19:30"
              min="2022-09-26T00:00" max="2022-09-30T00:00">
-
       <label for="end-time">End time:</label>
       <input type="datetime-local" id="end-time"
              name="start-time" value="2022-09-12T19:30"
              min="2022-09-26T00:00" max="2022-09-30T00:00">
-
       <button id="createEventSubmit">Submit</button>
     </div>
 
@@ -85,7 +90,6 @@
         let summary = document.getElementById("summary").value;
         let start = new Date(document.getElementById("start-time").value).toISOString();
         let end = new Date(document.getElementById("end-time").value).toISOString();
-        console.log(start, end);
         createEvent(calToken, summary, start, end, renderUpdatedCalendar);
       })
 
@@ -95,7 +99,6 @@
       })
 
     } else {
-      console.log("no cal token")
       // allow cal to be created
       document.getElementById("createCalendarPanel").style.display = "block";
       document.getElementById("createCalendarSubmit").addEventListener("click", function () {
@@ -108,18 +111,18 @@
     }
 
     function renderUpdatedCalendar(calendar) {
-        let events = calendar
-        if (events) {
-            PrettyCalendar.updateEvents(events, 11, 23);
+        if (calendar) {
+            PrettyCalendar.updateEvents(calendar.events, calendar.onlineHour, calendar.offlineHour);
         } else {
             alert("oops, couldn't find that calendar");
         }
     }
 
     function renderNewCalendar(calendar) {
-        let events = calendar
-        if (events) {
-            new PrettyCalendar(events, "navWrap", 11, 23);
+        console.log(calendar);
+        if (calendar) {
+            console.log(calendar);
+            new PrettyCalendar(calendar.events, "navWrap", calendar.onlineHour, calendar.offlineHour);
         } else {
             alert("oops, couldn't find that calendar");
         }
@@ -127,7 +130,6 @@
 
     function renderNewCalendarLink(calToken) {
       let link = `${window.location.href}#${calToken}`
-      console.log(link);
       let html = `Your calendar has been created! You can view it at: ${link}`;
       document.getElementById("createCalendarResult").style.display = "block";
       document.getElementById("createCalendarResult").innerHTML = html;
