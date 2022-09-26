@@ -19,7 +19,7 @@ class CalendarService {
 
     suspend fun getCalendarByEditToken(token: String): CalendarResponse {
         val calendarRow = Database().getCalendarByEditToken(token)
-        val events = EventsService().getAllEvents(token, calendarRow!!.rcToken)
+        val events = EventsService().getAllEvents(calendarRow!!.viewOnlyToken, calendarRow!!.rcToken)
         return CalendarResponse(
             editToken=calendarRow!!.editToken,
             viewOnlyToken=calendarRow!!.viewOnlyToken,

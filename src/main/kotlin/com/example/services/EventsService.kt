@@ -37,11 +37,12 @@ class EventsService {
     }
 
     suspend fun createEvent(createEventRequest: CreateEventRequest): Event {
-        println("creating event")
         val start = standardUtcStringfromLongUtcString(createEventRequest.start)
         val end = standardUtcStringfromLongUtcString(createEventRequest.end)
 
-        val eventRow = Database().addEvent(createEventRequest.calViewOnlyToken, createEventRequest.summary, start, end, createEventRequest.color)
+        val calendarRow = CalendarService().getCalendar(createEventRequest.calToken)
+
+        val eventRow = Database().addEvent(calendarRow.viewOnlyToken, createEventRequest.summary, start, end, createEventRequest.color)
         println(eventRow)
         return Event(
             id=eventRow!!.id,

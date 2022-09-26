@@ -7,7 +7,6 @@ data class CreateEventRequest(
     val summary: String,
     val start: String,
     val end: String,
-    val calViewOnlyToken: String,
-    val calEditToken: String,
+    val calToken: String,
     val color: String,
     )
