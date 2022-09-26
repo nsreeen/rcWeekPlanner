@@ -1,6 +1,7 @@
 This project is a personal RC calendar viewer, and it also allows custom calendar events to be added.
 
 ## TODO
+- [ ] Fix delete event
 - [ ] Fix CORS
 - [ ] Return reasonable HTTP responses
 - [ ] Persist logs
@@ -9,3 +10,5 @@ This project is a personal RC calendar viewer, and it also allows custom calenda
 - [ ] Style create & delete panels
 - [ ] Set page title
 - [ ] Fix event widths bug
+- [ ] Deal with the UI only supporting 12h days
+- [ ] Move day names up 

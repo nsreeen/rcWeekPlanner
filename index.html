@@ -6,6 +6,7 @@
 <link rel="stylesheet" type="text/css" href="pretty-calendar.css">
 <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="pretty-calendar.js"></script>
+<script src="app.js"></script>
 <style>
   html {
     box-sizing: border-box;
@@ -40,6 +41,9 @@
     <button id="createCalendarSubmit">Submit</button>
   </div>
 
+  <div id="createCalendarResult" class="panels">
+  </div>
+
   <div style="width:100%;height:100%;display:block;">
     <div id="navWrap" style="width:70%;height:80%;position:absolute;top:30%;margin:50px;right:0;left:0;"></div>
   </div>
@@ -62,118 +66,66 @@
   </div>
 
   <script>
-    let baseUrl = "https://rccal.fly.dev"
     let calToken = window.location.hash ? window.location.hash.slice(1) : "";
-    console.log(calToken);
+    console.log("just checking")
     if (calToken) {
       // load cal
       document.getElementById("editEventsPanel").style.display = "block";
-      getAndRenderCalendar(calToken, false);
+      console.log("hi")
+      getCalendar(calToken, renderNewCalendar);
+
       document.getElementById("createEventSubmit").addEventListener("click", function () {
-        createEvent()
+        let summary = document.getElementById("summary").value;
+        let start = document.getElementById("start").value;
+        let end = document.getElementById("end").value;
+        let day = document.getElementById("day").value;
+        createEvent(calToken, summary, start, end, day, renderUpdatedCalendar);
       })
+
       document.getElementById("delete").addEventListener("click", function () {
-          deleteEvent()
+          let id = document.getElementById("deleteId").value;
+          deleteEvent(id, renderUpdatedCalendar);
       })
+
     } else {
+      console.log("no cal token")
       // allow cal to be created
       document.getElementById("createCalendarPanel").style.display = "block";
       document.getElementById("createCalendarSubmit").addEventListener("click", function () {
-        createCalendar()
+        let name = document.getElementById("calName").value;
+        let online = document.getElementById("calStart").value;
+        let offline = document.getElementById("calEnd").value;
+        let rcToken = document.getElementById("rcToken").value;
+        createCalendar(name, online, offline, rcToken, renderNewCalendarLink);
     })
     }
 
-
-    function parseEvents(events) {
-            let eventsToRender = [];
-            for (let i = 0; i < events.length; i++) {
-                  let dayOfWeek = events[i]["dayOfWeek"];
-                  let summary = (events[i].id > 0) ? `${events[i]["summary"]} (id:${events[i]["id"]})` : events[i]["summary"];
-                  let sd = new Date(events[i]["start"])
-                  let start = `${sd.getHours() > 12 ? sd.getHours() - 12 : sd.getHours()}:${sd.getMinutes().toString().padStart(2, '0')}${sd.getHours() < 12 ? "am" : "pm"}`
-                  let ed = new Date(events[i]["end"])
-                  let end = `${ed.getHours() > 12 ? ed.getHours() - 12 : ed.getHours()}:${ed.getMinutes().toString().padStart(2, '0')}${ed.getHours() < 12 ? "am" : "pm"}`
-                  eventsToRender.push([dayOfWeek, start, summary, "#c0c0c0", end]);
-                  if (events[i].id > 0) {
-                    console.log(start, end, summary);
-                  }
-            }
-            return eventsToRender
-    }
-
-    function getAndRenderCalendar(calToken, update) {
-          console.log(calToken);
-          const xMLHttpRequest = new XMLHttpRequest();
-          xMLHttpRequest.responseType = "json";
-          xMLHttpRequest.open("GET", `${baseUrl}/calendars/${calToken}`);
-          xMLHttpRequest.send();
-          xMLHttpRequest.onload = function () {
-                console.log(xMLHttpRequest.response);
-                if (xMLHttpRequest.response) {
-                    let eventsToRender = parseEvents(xMLHttpRequest.response.events);
-                    console.log(eventsToRender);
-                    if (update) {
-                      PrettyCalendar.updateEvents(eventsToRender, 11, 23);
-                     } else {
-                      new PrettyCalendar(eventsToRender, "navWrap", 11, 23);
-                     }
-                } else {
-                    alert("oops, couldn't find that calendar");
-                }
-          }
-    }
-
-    function dayAndTimeToDate(day, time) {
-
-    }
-
-    function createEvent() {
-          const postHttp = new XMLHttpRequest()
-          postHttp.open('POST', `${baseUrl}/events`)
-          postHttp.setRequestHeader('Content-type', 'application/json')
-          let data = {
-                summary:document.getElementById("summary").value,
-                start:document.getElementById("start").value,
-                end:document.getElementById("end").value,
-                day:document.getElementById("day").value,
-                calToken: calToken,
-          }
-          postHttp.send(JSON.stringify(data))
-          postHttp.onload = function() {
-              console.log(postHttp.responseText);
-              getAndRenderCalendar(calToken, true)
-          }
-    }
-
-    function deleteEvent() {
-        const postHttp = new XMLHttpRequest()
-        postHttp.open('DELETE', `${baseUrl}/events`)
-        postHttp.setRequestHeader('Content-type', 'application/json')
-        let data = {
-              id:document.getElementById("deleteId").value,
-        }
-        postHttp.send(JSON.stringify(data))
-        postHttp.onload = function() {
-            console.log("delete response" + postHttp.responseText)
-            getAndRenderCalendar(calToken, true)
+    function renderUpdatedCalendar(calendar) {
+        let events = calendar
+        if (events) {
+            PrettyCalendar.updateEvents(events, 11, 23);
+        } else {
+            alert("oops, couldn't find that calendar");
         }
     }
 
-    function createCalendar() {
-        const postHttp = new XMLHttpRequest()
-        postHttp.open('POST', `${baseUrl}/calendars`)
-        postHttp.setRequestHeader('Content-type', 'application/json')
-        let data = {
-              name:document.getElementById("calName").value,
-              online:document.getElementById("calStart").value,
-              offline:document.getElementById("calEnd").value,
-              rcToken:document.getElementById("rcToken").value,
-        }
-        postHttp.send(JSON.stringify(data))
-        postHttp.onload = function() {
-            console.log(postHttp.responseText)
+    function renderNewCalendar(calendar) {
+        let events = calendar
+        if (events) {
+            new PrettyCalendar(events, "navWrap", 11, 23);
+        } else {
+            alert("oops, couldn't find that calendar");
         }
     }
+
+    function renderNewCalendarLink(calToken) {
+      let link = `${window.location.href}#${calToken}`
+      console.log(link);
+      let html = `Your calendar has been created! You can view it at: ${link}`;
+      document.getElementById("createCalendarResult").style.display = "block";
+      document.getElementById("createCalendarResult").innerHTML = html;
+    }
+
   </script>
 </body>
 
