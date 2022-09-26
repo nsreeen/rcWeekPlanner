@@ -20,6 +20,13 @@ fun zonedDateTimefromUtcString(s: String): ZonedDateTime {
     val zonedDateTime = ZonedDateTime.of(localDateTime, ZoneId.of("Etc/UTC"))
     return zonedDateTime
 }
+
+fun standardUtcStringfromLongUtcString(s: String): String {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    val localDateTime = LocalDateTime.parse(s, formatter)
+    val zonedDateTime = ZonedDateTime.of(localDateTime, ZoneId.of("Etc/UTC"))
+    return zonedDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm'Z'"))
+}
 fun getDayOfWeek(s: String): DayOfWeek {
     return zonedDateTimefromUtcString(s).dayOfWeek
 }
@@ -34,8 +41,7 @@ fun isThisWeek(s: String): Boolean {
 
 fun getTimeWithDayOffset(hours: Int, dayOffset: Int): String {
     val currentDateTime: ZonedDateTime = ZonedDateTime.now(ZoneId.of("Etc/UTC"))
-    val startOfWeek: ZonedDateTime = currentDateTime.minusDays(currentDateTime.dayOfWeek.ordinal.toLong()).truncatedTo(
-        ChronoUnit.DAYS)
+    val startOfWeek: ZonedDateTime = currentDateTime.minusDays(currentDateTime.dayOfWeek.ordinal.toLong()).truncatedTo(ChronoUnit.DAYS)
     val day = startOfWeek.plusDays(dayOffset.toLong())
     return ZonedDateTime.of(
         day.year,

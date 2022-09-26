@@ -1,6 +1,9 @@
 This project is a personal RC calendar viewer, and it also allows custom calendar events to be added.
 
 ## TODO
+- [ ] Fix time labels and input time zones
+  - [ ] Fix timezones when creating an event
+  - [ ] Fix timezones on time labels
 - [ ] Fix delete event
 - [ ] Fix CORS
 - [ ] Return reasonable HTTP responses
@@ -12,3 +15,4 @@ This project is a personal RC calendar viewer, and it also allows custom calenda
 - [ ] Fix event widths bug
 - [ ] Deal with the UI only supporting 12h days
 - [ ] Move day names up 
+- [ ] Provide different view and edit links

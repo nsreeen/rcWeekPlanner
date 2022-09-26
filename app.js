@@ -1,4 +1,4 @@
-let baseUrl = "https://rccal.fly.dev"
+let baseUrl = "http://0.0.0.0:8080" //"https://rccal.fly.dev"
 
 function parseEvents(events) {
     let eventsToRender = [];
@@ -35,7 +35,7 @@ function getCalendar(calToken, renderCallback) {
       }
 }
 
-function createEvent(calToken, summary, start, end, day, renderCallback) {
+function createEvent(calToken, summary, start, end, renderCallback) {
       const postHttp = new XMLHttpRequest()
       postHttp.open('POST', `${baseUrl}/events`)
       postHttp.setRequestHeader('Content-type', 'application/json')
@@ -44,7 +44,6 @@ function createEvent(calToken, summary, start, end, day, renderCallback) {
             summary: summary,
             start: start,
             end: end,
-            day: day,
             calToken: calToken,
       }
       postHttp.send(JSON.stringify(data))
