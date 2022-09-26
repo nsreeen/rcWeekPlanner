@@ -20,6 +20,7 @@ class EventsService {
                 end=row.end,
                 dayOfWeek=getDayOfWeek(row.start),
                 isRcEvent=false,
+                color=row.color,
             )
         }
         val allEvents = rcEvents + internalEvents
@@ -40,7 +41,7 @@ class EventsService {
         val start = standardUtcStringfromLongUtcString(createEventRequest.start)
         val end = standardUtcStringfromLongUtcString(createEventRequest.end)
 
-        val eventRow = Database().addEvent(createEventRequest.calViewOnlyToken, createEventRequest.summary, start, end)
+        val eventRow = Database().addEvent(createEventRequest.calViewOnlyToken, createEventRequest.summary, start, end, createEventRequest.color)
         println(eventRow)
         return Event(
             id=eventRow!!.id,
@@ -49,6 +50,7 @@ class EventsService {
             end=eventRow!!.end,
             dayOfWeek=getDayOfWeek(start),
             isRcEvent=false,
+            color=eventRow!!.color,
         )
     }
 
@@ -79,6 +81,7 @@ class EventsService {
                     end = end,
                     dayOfWeek = getDayOfWeek(start),
                     isRcEvent = true,
+                    color = "",
                 )
             }
 

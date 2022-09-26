@@ -9,6 +9,7 @@ data class EventRow (
     val summary: String,
     val start: String,
     val end: String,
+    val color: String,
 )
 
 object EventRows: Table() {
@@ -17,6 +18,7 @@ object EventRows: Table() {
     val summary = varchar("summary", 1024)
     val start = varchar("start", 128)
     val end = varchar("end", 128)
+    val color= varchar("color", 128)
 
     override val primaryKey = PrimaryKey(id)
 }

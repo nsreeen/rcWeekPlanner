@@ -3,13 +3,16 @@ let baseUrl = "http://0.0.0.0:8080"
 function parseEvents(events) {
     let eventsToRender = [];
     for (let i = 0; i < events.length; i++) {
+          console.log(events[i]);
           let dayOfWeek = events[i]["dayOfWeek"];
           let summary = (events[i].id > 0) ? `${events[i]["summary"]} (id:${events[i]["id"]})` : events[i]["summary"];
           let sd = new Date(events[i]["start"])
           let start = `${sd.getHours() > 12 ? sd.getHours() - 12 : sd.getHours()}:${sd.getMinutes().toString().padStart(2, '0')}${sd.getHours() < 12 ? "am" : "pm"}`
           let ed = new Date(events[i]["end"])
           let end = `${ed.getHours() > 12 ? ed.getHours() - 12 : ed.getHours()}:${ed.getMinutes().toString().padStart(2, '0')}${ed.getHours() < 12 ? "am" : "pm"}`
-          eventsToRender.push([dayOfWeek, start, summary, "#c0c0c0", end]);
+          let color = events[i].color.length > 0 ? events[i].color : "#c0c0c0";
+          console.log([dayOfWeek, start, summary, color, end]);
+          eventsToRender.push([dayOfWeek, start, summary, color, end]);
     }
     return eventsToRender
 }
@@ -38,7 +41,7 @@ function getCalendar(calToken, renderCallback) {
       }
 }
 
-function createEvent(calToken, summary, start, end, renderCallback) {
+function createEvent(calToken, summary, start, end, color, renderCallback) {
       const postHttp = new XMLHttpRequest()
       postHttp.open('POST', `${baseUrl}/events`)
       postHttp.setRequestHeader('Content-type', 'application/json')
@@ -48,6 +51,7 @@ function createEvent(calToken, summary, start, end, renderCallback) {
             start: start,
             end: end,
             calToken: calToken,
+            color: color,
       }
       postHttp.send(JSON.stringify(data))
       postHttp.onload = function() {

@@ -10,4 +10,5 @@ data class Event(
     val end: String,
     val dayOfWeek: DayOfWeek,
     val isRcEvent: Boolean,
+    val color: String,
     )

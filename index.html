@@ -35,8 +35,6 @@
   <div id="createCalendarPanel" class="panels">
     Create a calendar!
     name: <input id="calName">
-<!--    start time: <input id="calStart">-->
-<!--    end time: <input id="calEnd">-->
 
     <label for="calStart">Calendar start time/ online time:</label>
     <input type="time" id="calStart" name="calStart"
@@ -54,7 +52,7 @@
   </div>
 
   <div style="width:100%;height:100%;display:block;">
-    <div id="navWrap" style="width:70%;height:70%;position:absolute;top:5%;margin:50px;right:0;left:0;"></div>
+    <div id="navWrap" style="width:70%;height:60%;position:absolute;top:10%;margin:50px;right:0;left:0;"></div>
   </div>
 
   <div id="editEventsPanel" class="panels">
@@ -69,6 +67,9 @@
       <input type="datetime-local" id="end-time"
              name="start-time" value="2022-09-12T19:30"
              min="2022-09-26T00:00" max="2022-09-30T00:00">
+      <label for="eventColor">Event color:</label>
+      <input type="color" id="eventColor" name="eventColor"
+             value="#c0c0c0">
       <button id="createEventSubmit">Submit</button>
     </div>
 
@@ -93,7 +94,8 @@
             let summary = document.getElementById("summary").value;
             let start = new Date(document.getElementById("start-time").value).toISOString();
             let end = new Date(document.getElementById("end-time").value).toISOString();
-            createEvent(calToken, summary, start, end, renderUpdatedCalendar);
+            let color = document.getElementById("eventColor").value;
+            createEvent(calToken, summary, start, end, color, renderUpdatedCalendar);
           })
 
           document.getElementById("delete").addEventListener("click", function () {

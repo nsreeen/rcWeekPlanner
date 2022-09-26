@@ -20,7 +20,7 @@ class Database: DatabaseInterface {
                     summary=row[EventRows.summary],
                     start=row[EventRows.start],
                     end=row[EventRows.end],
-
+                    color=row[EventRows.color],
                     )
                 }
     }
@@ -30,12 +30,14 @@ class Database: DatabaseInterface {
         summary: String,
         start: String,
         end: String,
+        color: String,
     ): EventRow? = dbQuery {
             val insertStatement = EventRows.insert {
                 it[EventRows.calViewOnlyToken] = calViewOnlyToken
                 it[EventRows.summary] = summary
                 it[EventRows.start] = start
                 it[EventRows.end] = end
+                it[EventRows.color] = color
             }
             insertStatement.resultedValues?.singleOrNull()?.let { row ->
                 EventRow(
@@ -44,6 +46,7 @@ class Database: DatabaseInterface {
                     summary = row[EventRows.summary],
                     start = row[EventRows.start],
                     end = row[EventRows.end],
+                    color = row[EventRows.color],
                 )
             }
     }
