@@ -4,7 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CalendarResponse(
-    val calToken: String,
+    val viewOnlyToken: String,
+    val editToken: String?,
     val name: String,
     val onlineTime: String,
     val offlineTime: String,

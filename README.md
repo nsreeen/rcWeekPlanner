@@ -14,3 +14,4 @@ This project is a personal RC calendar viewer, and it also allows custom calenda
 - [ ] Fix event widths bug
 - [ ] Deal with the UI only supporting 12h days
 - [ ] Move day names up
+- [ ] Handle tokens/ cal ids better (+ validate)

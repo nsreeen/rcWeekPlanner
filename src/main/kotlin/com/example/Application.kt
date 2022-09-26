@@ -23,13 +23,11 @@ fun main() {
             get("/") {
                 call.respond("hello")
             }
-            get("/calendars/{cal_token}") {
+            get("/calendars/{token}") {
                 try {
-                    val logger = LoggerFactory.getLogger(Application::class.java)
-                    logger.info("Hello World")
-                    val calToken = call.parameters["cal_token"]!!
-                    call.application.environment.log.info("GET /calendars/$calToken")
-                    call.respond(CalendarService().getCalendar(calToken))
+                    val token = call.parameters["token"]!!
+                    call.application.environment.log.info("GET /calendars$token")
+                    call.respond(CalendarService().getCalendar(token))
                 } catch (exception: Exception) {
                     println(exception)
                 }

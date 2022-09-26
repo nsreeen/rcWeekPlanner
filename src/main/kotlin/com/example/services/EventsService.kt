@@ -9,9 +9,9 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 
 class EventsService {
-    suspend fun getAllEvents(calToken: String, rcToken: String): List<Event> {
+    suspend fun getAllEvents(calViewOnlyToken: String, rcToken: String): List<Event> {
         val rcEvents: List<Event> = getRcEvents(rcToken)
-        val internalEventRows: List<EventRow> = Database().getEvents(calToken)
+        val internalEventRows: List<EventRow> = Database().getEvents(calViewOnlyToken)
         val internalEvents = internalEventRows.map {row ->
             Event(
                 id=row.id,
@@ -40,7 +40,7 @@ class EventsService {
         val start = standardUtcStringfromLongUtcString(createEventRequest.start)
         val end = standardUtcStringfromLongUtcString(createEventRequest.end)
 
-        val eventRow = Database().addEvent(createEventRequest.calToken, createEventRequest.summary, start, end)
+        val eventRow = Database().addEvent(createEventRequest.calViewOnlyToken, createEventRequest.summary, start, end)
         println(eventRow)
         return Event(
             id=eventRow!!.id,

@@ -7,6 +7,7 @@ interface DatabaseInterface {
     suspend fun getEvents(calToken: String): List<EventRow>
     suspend fun addEvent(calToken: String, summary: String, start: String, end: String,): EventRow?
     suspend fun deleteEvent(id: Int): Boolean
-    suspend fun createCalendar(token: String, name: String, online: String, offline: String, rcToken: String): CalendarRow?
-    suspend fun getCalendar(token: String): CalendarRow?
+    suspend fun createCalendar(editToken: String, viewOnlyToken: String, name: String, online: String, offline: String, rcToken: String): CalendarRow?
+    suspend fun getCalendarByEditToken(token: String): CalendarRow?
+    suspend fun getCalendarByViewOnlyToken(token: String): CalendarRow?
 }

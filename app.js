@@ -1,4 +1,4 @@
-let baseUrl = "https://rccal.fly.dev"
+let baseUrl = "http://0.0.0.0:8080"
 
 function parseEvents(events) {
     let eventsToRender = [];
@@ -31,7 +31,6 @@ function getCalendar(calToken, renderCallback) {
                   offlineHour: offlineHour,
                   events: eventsToRender,
                 };
-                console.log(calendar);
             } else {
                 var calendar = null
             }
@@ -88,8 +87,7 @@ function createCalendar(name, online, offline, rcToken, renderCallback) {
     }
     postHttp.send(JSON.stringify(data))
     postHttp.onload = function() {
-        let calToken = postHttp.response.calToken;
-        renderCallback(calToken);
+        renderCallback(postHttp.response.viewOnlyToken, postHttp.response.editToken);
     }
 }
 

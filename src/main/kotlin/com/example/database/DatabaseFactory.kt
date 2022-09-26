@@ -21,13 +21,15 @@ object DatabaseFactory {
             transaction(database) {
                 SchemaUtils.create(EventRows)
                 SchemaUtils.create(CalendarRows)
+                SchemaUtils.create(TokenRows)
             }
-        } else {
+        } else { //this is for local dev
             val url = "jdbc:postgresql://db:5432/localdb?user=postgres"
             val database = Database.connect(url, driverClassName)
             transaction(database) {
                 SchemaUtils.create(EventRows)
                 SchemaUtils.create(CalendarRows)
+                SchemaUtils.create(TokenRows)
             }
         }
     }
