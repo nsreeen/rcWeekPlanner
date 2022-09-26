@@ -1,4 +1,4 @@
-let baseUrl = "http://0.0.0.0:8080" //"https://rccal.fly.dev"
+let baseUrl = "https://rccal.fly.dev"
 
 function parseEvents(events) {
     let eventsToRender = [];
