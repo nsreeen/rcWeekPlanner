@@ -15,12 +15,12 @@ You will need to update the baseUrl in app.js.
 To update the database schema, delete the db from the fly dashboard, and (recreate)[https://fly.io/docs/reference/postgres/].
 
 ## TODO
-- [ ] Fix delete event (currently have to open the page in a new tab after deleting)
+- [ ] Refresh on event deletion (so the calendar doesn't have to be reopened)
 - [ ] Fix CORS
 - [ ] Return reasonable HTTP responses in case of failure
 - [ ] Persist logs
 - [ ] Style create & delete panels
 - [ ] Fix event widths bug
-- [ ] Deal with the UI only supporting 12h days
+- [ ] Allow days to be more or less than 12 hours (currently don't because doesn't render correctly)
 - [ ] Move day name labels up
 - [ ] Organise use of tokens/ cal ids better (+ validate)

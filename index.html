@@ -101,7 +101,7 @@
 
           document.getElementById("delete").addEventListener("click", function () {
               let id = document.getElementById("deleteId").value;
-              deleteEvent(id, renderUpdatedCalendar);
+              deleteEvent(id, alertOnDeleted);
           })
       }
 
@@ -114,6 +114,10 @@
             let rcToken = document.getElementById("rcToken").value;
             createCalendar(name, online, offline, rcToken, renderNewCalendarLink);
         })
+    }
+
+    function alertOnDeleted() {
+      alert("The event has been deleted.  Please open the calendar again in another tab.")
     }
 
     function renderUpdatedCalendar(calendar) {
