@@ -25,7 +25,7 @@ function getCalendar(calToken, renderCallback) {
       xMLHttpRequest.send();
       xMLHttpRequest.onload = function () {
             if (xMLHttpRequest.response) {
-                console.log(xMLHttpRequest.response);
+                console.log("response: ", xMLHttpRequest.response);
                 let eventsToRender = parseEvents(xMLHttpRequest.response.events);
                 let onlineHour = new Date(xMLHttpRequest.response.onlineTime).getHours();
                 let offlineHour = new Date(xMLHttpRequest.response.offlineTime).getHours();
@@ -76,10 +76,15 @@ function deleteEvent(id, renderCallback) {
 }
 
 function createCalendar(name, online, offline, rcToken, renderCallback) {
+    let onlineHour = online.split(":")[0];
+    let offlineHour = offline.split(":")[0];
+    offlineHour = (parseInt(offlineHour) - 12) == parseInt(onlineHour) ? offlineHour : (parseInt(onlineHour) + 12).toString();
+    console.log(onlineHour, offlineHour);
     let startTime = new Date();
-    startTime.setHours(online.split(":")[0]);
+    startTime.setHours(onlineHour);
     let endTime = new Date();
-    endTime.setHours(offline.split(":")[0]);
+    endTime.setHours(offlineHour);
+    console.log(startTime, endTime);
 
     const postHttp = new XMLHttpRequest()
     postHttp.open('POST', `${baseUrl}/calendars`)
@@ -96,4 +101,3 @@ function createCalendar(name, online, offline, rcToken, renderCallback) {
         renderCallback(postHttp.response.viewOnlyToken, postHttp.response.editToken);
     }
 }
-

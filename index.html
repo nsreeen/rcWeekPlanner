@@ -84,6 +84,7 @@
     let calToken = window.location.hash ? window.location.hash.slice(1) : "";
     if (calToken) { // load cal
       if (calToken[0] === "v") { // load view only calendar
+
           getCalendar(calToken, renderNewCalendar);
 
       } else { // load editable calendar
