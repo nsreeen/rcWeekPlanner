@@ -99,6 +99,8 @@
     text-align: center;
     font-size: 1em;
     outline: 1px dotted #eee;
+    display: flex;
+    align-items: center;
 }
 
 .event {

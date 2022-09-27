@@ -10,6 +10,9 @@ It only shows the current week's events.  You can create a calendar with your RC
 Run locally with docker compose to spin up a local database:
 `docker compose build`
 `docker compose up`
+You will need to update the baseUrl in app.js.
+
+To update the database schema, delete the db from the fly dashboard, and (recreate)[https://fly.io/docs/reference/postgres/].
 
 ## TODO
 - [ ] Fix delete event (currently have to open the page in a new tab after deleting)
