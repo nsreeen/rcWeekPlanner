@@ -7,7 +7,8 @@ PrettyCalendar.EVENT_PADDING = 10;
 PrettyCalendar.prototype.wrappingDiv;
 
 function PrettyCalendar(events, divToPut, start, end, navigation, customLabels) {
-    var timeRange = end - start;
+    console.log(`Creating new PrettyCalendar with events: ${events} divToPut: ${divToPut} start:${start} end:${end}`)
+    var timeRange = Math.abs(end - start);
     if (typeof navigation == 'undefined') navigation = false;
     if (typeof customLabels == 'undefined') {
         var weekday = new Array(5);
@@ -73,21 +74,62 @@ PrettyCalendar.prototype.genCalendar = function (customLabels, timeRange, start,
     $(calendarDiv).attr("id", "calendar");
     var sidebarDiv = document.createElement("div");
     $(sidebarDiv).attr("id", "sidebar");
-    for (var i = start; i < end; i+=2) { //sets the time labels on the left margin
-        var timeLabelDiv = document.createElement("div");
-        $(timeLabelDiv).attr("class", "timeLabel");
-        if (i==0) {
-            textLabel = "12am"
-        } else if (i==12) {
-            textLabel = "12pm"
-        } else if (i > 12) {
-            textLabel = `${i-12}pm`
-        } else {
-            textLabel = `${i}am`
-        }
-        $(timeLabelDiv).text(textLabel);
-        sidebarDiv.appendChild(timeLabelDiv);
+    console.log(`adding time labels. start:${start} end:${end}`);
+
+    function addTimeLabel(i) {
+      var timeLabelDiv = document.createElement("div");
+      $(timeLabelDiv).attr("class", "timeLabel");
+      if (i==0) {
+          textLabel = "12am"
+      } else if (i==12) {
+          textLabel = "12pm"
+      } else if (i > 12) {
+          textLabel = `${i-12}pm`
+      } else {
+          textLabel = `${i}am`
+      }
+      $(timeLabelDiv).text(textLabel);
+      sidebarDiv.appendChild(timeLabelDiv);
     }
+
+    function loopThroughLabels(start, end) {
+      for (var i = start; i < end; i+=2) {
+          addTimeLabel(i);
+      }
+    }
+
+    if (start < end) {
+      loopThroughLabels(start, end);
+    } else {
+      if (start % 2 == 0) {
+        loopThroughLabels(start, 23);
+        loopThroughLabels(0, end+1);
+      } else {
+        loopThroughLabels(start, 24);
+        loopThroughLabels(1, end+1);
+      }
+    }
+
+    // start:13 end:1
+    // start:16 end:4
+    // start:11 end:23
+    // for (var i = start; i < end; i+=2) { //sets the time labels on the left margin
+    //     var timeLabelDiv = document.createElement("div");
+    //     $(timeLabelDiv).attr("class", "timeLabel");
+    //     if (i==0) {
+    //         textLabel = "12am"
+    //     } else if (i==12) {
+    //         textLabel = "12pm"
+    //     } else if (i > 12) {
+    //         textLabel = `${i-12}pm`
+    //     } else {
+    //         textLabel = `${i}am`
+    //     }
+    //     $(timeLabelDiv).text(textLabel);
+    //     sidebarDiv.appendChild(timeLabelDiv);
+    // }
+
+
     for (var i = 0; i < 5; i++) {
         var dayDiv = document.createElement("div");
         $(dayDiv).attr("id", "day" + (i + 1));
@@ -111,6 +153,12 @@ PrettyCalendar.prototype.genCalendar = function (customLabels, timeRange, start,
 }
 
 PrettyCalendar.timeToHours = function (formatted) {
+    // 0
+    // if pm -> +12
+    // if 12 -> -12
+    // + hours (from 12 hour clock time)
+
+
     var timeHours = 0;
     var timeWithLabel = formatted;
     if (timeWithLabel.replace("pm", "") != timeWithLabel) {
@@ -143,6 +191,7 @@ function overlapsWithLastEvent(eventStart, eventEnd, lastEventStart, lastEventEn
 }
 
 PrettyCalendar.populateEvents = function (eventsToday, timeRange, start, end) {
+    console.log(`populating events ${eventsToday}`);
     var counterTemp = 0;
     for (var j = 0; j < 5; j++) {
         var lastTime = PrettyCalendar.UNDEFINED_TIME;
@@ -170,13 +219,19 @@ PrettyCalendar.populateEvents = function (eventsToday, timeRange, start, end) {
             var eventStartHours = PrettyCalendar.timeToHours(eventStart); //startTime of event as 24h clock hour
             var eventEndHours = PrettyCalendar.timeToHours(eventEnd);
 
-            if (eventStartHours < start || eventStartHours >= end) {
-                continue;
-            }
-
+            // if (eventStartHours < start || eventStartHours >= end) {
+            //     console.log(`continuing because time out of bounds. eventStartHours:${eventStartHours} start:${start} end:${end}`)
+            //     continue;
+            // }
+            // console.log("will render event");
+            console.log(`${eventSummary} eventStart:${eventStart} eventEnd:${eventEnd} startToHours:${PrettyCalendar.timeToHours(eventStart)} endToHours:${PrettyCalendar.timeToHours(eventEnd)} start:${start} end:${end}`)
             var startOffset = PrettyCalendar.hoursToPercent((eventStartHours-start), timeRange); // start offset
             var lastPercentTemp = PrettyCalendar.hoursToPercent(lastTime, timeRange); // used to handle width offset when multiple events per hour
-            var height = (PrettyCalendar.hoursToPercent((PrettyCalendar.timeToHours(eventEnd)-start), timeRange) - startOffset);
+            if (eventEndHours < eventStartHours) {
+              eventEndHours = end;
+            }
+            var height = (PrettyCalendar.hoursToPercent((eventEndHours-start), timeRange) - startOffset);
+
 
             // this bit is handling multiple events on the same hour
             //var multipleEventsAtSamehour = $("#calendar").height() * lastPercentTemp / 100 + $("#event" + (counterTemp - 1)).innerHeight()+ PrettyCalendar.EVENT_PADDING > $("#calendar").height() * startOffset / 100
@@ -216,7 +271,7 @@ PrettyCalendar.populateEvents = function (eventsToday, timeRange, start, end) {
 }
 
 PrettyCalendar.updateEvents = function (events, start, end) {
-    var timeRange = end - start;
+    var timeRange = Math.abs(end - start);
     $(".event").remove();
     PrettyCalendar.commitEvents(events, timeRange, start, end);
 }

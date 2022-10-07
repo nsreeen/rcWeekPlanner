@@ -79,12 +79,10 @@ function createCalendar(name, online, offline, rcToken, renderCallback) {
     let onlineHour = online.split(":")[0];
     let offlineHour = offline.split(":")[0];
     offlineHour = (parseInt(offlineHour) - 12) == parseInt(onlineHour) ? offlineHour : (parseInt(onlineHour) + 12).toString();
-    console.log(onlineHour, offlineHour);
     let startTime = new Date();
     startTime.setHours(onlineHour);
     let endTime = new Date();
     endTime.setHours(offlineHour);
-    console.log(startTime, endTime);
 
     const postHttp = new XMLHttpRequest()
     postHttp.open('POST', `${baseUrl}/calendars`)
