@@ -16,11 +16,9 @@ To update the database schema, delete the db from the fly dashboard, and (recrea
 
 ## TODO
 - [ ] Refresh on event deletion (so the calendar doesn't have to be reopened)
-- [ ] Fix CORS
 - [ ] Return reasonable HTTP responses in case of failure
 - [ ] Persist logs
 - [ ] Style create & delete panels
 - [ ] Fix event widths bug
 - [ ] Allow days to be more or less than 12 hours (currently don't because doesn't render correctly)
-- [ ] Move day name labels up
 - [ ] Organise use of tokens/ cal ids better (+ validate)
